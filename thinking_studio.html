@@ -1,0 +1,2576 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thinking Studio | 思考構造化 ＆ 発射台ハブ</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter, Noto Sans JP & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 🎨 コックピット完全準拠：深紺漆黒ダークパレット ＆ ハイコントラスト */
+    body.theme-dark {
+      --bg-body: #090d16;
+      --bg-grid: rgba(255, 255, 255, 0.035);
+      --bg-header: rgba(15, 23, 42, 0.97);
+      --border-header: #243044;
+      --bg-pane: #0d1321;
+      --border-pane: #243044;
+      --bg-card: #151d2e;
+      --bg-card-sub: #0f1624;
+      --border-card: #273752;
+      --text-main: #ffffff;
+      --text-sub: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-btn: #0284c7;
+      --accent-btn-hover: #0369a1;
+      --accent-btn-text: #ffffff;
+      --scroll-track: #090d16;
+      --scroll-thumb: #334155;
+      color-scheme: dark;
+    }
+
+    body.theme-light {
+      --bg-body: #f8fafc;
+      --bg-grid: rgba(148, 163, 184, 0.15);
+      --bg-header: rgba(255, 255, 255, 0.98);
+      --border-header: #cbd5e1;
+      --bg-pane: #ffffff;
+      --border-pane: #cbd5e1;
+      --bg-card: #ffffff;
+      --bg-card-sub: #f1f5f9;
+      --border-card: #cbd5e1;
+      --text-main: #0f172a;
+      --text-sub: #334155;
+      --text-muted: #64748b;
+      --accent-btn: #0284c7;
+      --accent-btn-hover: #0369a1;
+      --accent-btn-text: #ffffff;
+      --scroll-track: #f1f5f9;
+      --scroll-thumb: #94a3b8;
+      color-scheme: light;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      background-image: 
+        linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--text-main);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scroll-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 9999px; }
+
+    .t-header { background: var(--bg-header); border-color: var(--border-header); }
+    .t-pane { background: var(--bg-pane); border-color: var(--border-pane); }
+    .t-card { background: var(--bg-card); border-color: var(--border-card); }
+    .t-card-sub { background: var(--bg-card-sub); border-color: var(--border-card); }
+    .t-text-main { color: var(--text-main); }
+    .t-text-sub { color: var(--text-sub); }
+    .t-text-muted { color: var(--text-muted); }
+
+    /* 🎙️ 録音中：枠全体の呼吸・脈動発光 */
+    @keyframes frame-recording-breath {
+      0%, 100% {
+        border-color: rgba(244, 63, 94, 0.55);
+        box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.3), 0 2px 12px rgba(244, 63, 94, 0.2);
+      }
+      50% {
+        border-color: rgba(244, 63, 94, 0.95);
+        box-shadow: 0 0 0 2.5px rgba(244, 63, 94, 0.6), 0 4px 20px rgba(244, 63, 94, 0.4);
+      }
+    }
+    .recording-glow-frame {
+      animation: frame-recording-breath 1.8s infinite ease-in-out !important;
+      border-color: #f43f5e !important;
+    }
+
+    @keyframes pulse-mic {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    .recording-active { animation: pulse-mic 1.5s infinite; }
+
+    /* 参謀AI発話中・思考中のチカチカ・ネオン脈動 */
+    @keyframes persona-speak-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 3px #38bdf8); }
+      50% { opacity: 0.3; transform: scale(0.9); filter: drop-shadow(0 0 9px #0284c7); }
+    }
+    .persona-speaking-neon {
+      animation: persona-speak-pulse 0.8s infinite ease-in-out !important;
+    }
+
+    /* 引き継ぎアンロック時のゴールデン・グロー */
+    @keyframes golden-unlock-breath {
+      0%, 100% { box-shadow: 0 0 0 1px #eab308, 0 4px 14px rgba(234, 179, 8, 0.25); }
+      50% { box-shadow: 0 0 0 2px #facc15, 0 6px 22px rgba(234, 179, 8, 0.5); }
+    }
+    .golden-ready-btn {
+      animation: golden-unlock-breath 2s infinite ease-in-out !important;
+    }
+
+    /* 板書ハイライトアニメーション */
+    @keyframes board-update-flash {
+      0% { background-color: rgba(2, 132, 199, 0.35); border-color: #38bdf8; }
+      100% { background-color: transparent; }
+    }
+    .board-updated {
+      animation: board-update-flash 1.6s ease-out;
+    }
+
+    .interactive-card {
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .interactive-card:hover {
+      transform: translateY(-1.5px);
+    }
+  </style>
+</head>
+<body class="theme-dark h-screen font-sans flex flex-col selection:bg-sky-500 selection:text-white overflow-hidden">
+
+  <!-- ================= 👑 ヘッダー ================= -->
+  <header class="border-b t-header backdrop-blur-md shrink-0 z-40 px-4 py-1.5 shadow-sm transition-colors duration-200">
+    <div class="max-w-[1920px] mx-auto flex items-center justify-between gap-4 h-[36px]">
+      
+      <!-- 左：ブランド＆セッション切替（件数常時表示） -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center shadow-md font-black text-xs">
+            <i data-lucide="brain-circuit" class="w-3.5 h-3.5"></i>
+          </div>
+          <h1 class="text-xs font-black tracking-tight t-text-main flex items-center gap-1.5">
+            <span>Thinking Studio</span>
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 font-bold">思考構造化 ＆ 発射台</span>
+          </h1>
+        </div>
+
+        <span class="text-slate-700">|</span>
+
+        <!-- セッション切替・履歴（件数バッジ付き）＆ 新規ボタン -->
+        <div class="flex items-center gap-1.5 min-w-0">
+          <button onclick="openSessionsModal()" class="px-2.5 py-1 rounded-lg t-card-sub border hover:border-sky-500 text-xs font-bold flex items-center gap-1.5 transition truncate max-w-[260px] cursor-pointer shadow-sm" title="過去セッションの呼び出し・履歴一覧（保存件数表示中）">
+            <i data-lucide="folder-clock" class="w-3.5 h-3.5 text-sky-400 shrink-0"></i>
+            <span id="header-session-title" class="truncate font-mono">新規壁打ちセッション</span>
+            <span id="header-session-count-badge" class="px-1.5 py-0.2 rounded-full bg-sky-500/20 text-sky-300 font-mono text-[9px] font-black shrink-0 border border-sky-500/30">1件</span>
+            <i data-lucide="chevron-down" class="w-3 h-3 opacity-60 shrink-0"></i>
+          </button>
+          <button onclick="createNewSession()" class="p-1 rounded-lg t-card border hover:text-sky-400 hover:border-sky-500 transition cursor-pointer shadow-sm text-sky-400 shrink-0" title="新しいセッションを開始（現在の相談は自動保持されます）">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 中央：手綱フェーズインジケーター（現在地） -->
+      <div class="flex items-center gap-2 px-3 py-1 rounded-xl t-card-sub border shadow-inner">
+        <span class="text-[10px] font-mono font-bold t-text-muted">スタジオ進捗:</span>
+        <div id="phase-badge" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black font-mono shadow-sm bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="phase-label">🟢 Step 1: 傾聴 ＆ 本質ゴール探求中</span>
+        </div>
+      </div>
+
+      <!-- 右：ツール・ガイド・連携ボタン -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <!-- 📘 体系的総合ガイドブックボタン -->
+        <button onclick="openGuideModal()" class="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" title="思想・使い方・全体連携・詳細機能の完全ガイド">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>総合ガイド ＆ 全体図</span>
+        </button>
+
+        <!-- 🚀 コックピット引き継ぎ出力 -->
+        <button onclick="exportToCockpitJson()" id="btn-header-export-cockpit" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm transition active:scale-95 cursor-pointer" title="まとまった内容をWish & Action コックピット用JSONとして保存（セッションは消えません）">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>コックピット引き継ぎ</span>
+        </button>
+
+        <!-- テーマ切替 -->
+        <button onclick="toggleTheme()" class="p-1.5 rounded-lg t-card border hover:opacity-80 transition cursor-pointer shadow-sm" title="テーマ切替">
+          <span id="theme-icon">🌙</span>
+        </button>
+
+        <!-- ⚙️ 設定 -->
+        <button onclick="openSettingsModal()" class="p-1.5 rounded-lg t-card border hover:opacity-80 transition cursor-pointer shadow-sm" title="API・VOICEVOX設定">
+          <i data-lucide="settings" class="w-4 h-4 text-sky-400"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= メイン 3ペイン レイアウト（左 4 : 中央 2.5 : 右 3.5） ================= -->
+  <main class="flex-1 min-h-0 max-w-[1920px] w-full mx-auto p-3.5 grid grid-cols-[4fr_2.5fr_3.5fr] gap-3.5 overflow-hidden">
+
+    <!-- =========================================================
+         【左ペイン (4fr)】リアルタイム構造化黒板
+         ========================================================= -->
+    <section class="flex flex-col h-full min-h-0 min-w-0 border rounded-2xl p-3.5 t-pane shadow-sm transition-colors duration-200 overflow-hidden relative">
+      
+      <!-- 黒板ヘッダー -->
+      <div class="flex items-center justify-between pb-2 border-b border-inherit shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-400 shrink-0">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          </span>
+          <div class="min-w-0">
+            <h2 class="font-black text-xs tracking-wide t-text-main flex items-center gap-1.5">
+              <span>リアルタイム構造化黒板</span>
+              <span id="board-update-indicator" class="hidden text-[9px] font-mono font-bold text-sky-400 animate-pulse">● 更新中</span>
+            </h2>
+            <p class="text-[10px] t-text-muted truncate">全タスク伝票 ＆ 開発現場仕様に自動マッピング</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0 font-mono text-xs">
+          <button onclick="copyBoardAsMarkdown()" class="px-2 py-1 rounded-lg t-card border hover:text-sky-400 text-[11px] font-bold flex items-center gap-1 transition cursor-pointer shadow-sm" title="黒板の内容をMarkdown形式でコピー">
+            <i data-lucide="copy" class="w-3 h-3 text-sky-400"></i>
+            <span>MDコピー</span>
+          </button>
+          <button onclick="resetBoardData()" class="p-1 rounded-lg t-card border hover:text-rose-400 text-slate-400 transition cursor-pointer shadow-sm" title="黒板をクリア">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 黒板本体（縦スクロールエリア） -->
+      <div class="flex-1 min-h-0 overflow-y-auto py-2.5 pr-1 space-y-2.5 font-sans">
+        
+        <!-- 💡 1. 発想原点・背景 (Why) -->
+        <div id="board-why-card" class="p-3 rounded-xl border t-card transition-all interactive-card shadow-sm">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-black tracking-wide text-amber-400 flex items-center gap-1.5">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>1. 発想のきっかけ・背景 (Why)</span>
+            </h3>
+            <span class="text-[9px] font-mono font-bold t-text-muted">根本動機</span>
+          </div>
+          <p id="board-why-text" class="text-xs t-text-main font-medium leading-relaxed whitespace-pre-wrap break-words">
+            （まだ会話が始まっていません。中央のマイクを押して、思いつくままに話し始めてください）
+          </p>
+        </div>
+
+        <!-- 🎯 【最重要】定義されたゴール (Goal) カード -->
+        <div id="board-goal-card" class="p-3.5 rounded-xl border border-sky-500/40 bg-sky-500/5 transition-all interactive-card shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <h3 class="text-xs font-black tracking-wide text-sky-400 flex items-center gap-1.5">
+              <i data-lucide="target" class="w-4 h-4 text-sky-400"></i>
+              <span>🎯 定義されたゴール (Goal)</span>
+            </h3>
+            <span id="board-goal-badge" class="text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30">
+              ⏳ 探索中
+            </span>
+          </div>
+          <p id="board-goal-text" class="text-xs text-white font-bold leading-relaxed whitespace-pre-wrap break-words">
+            （対話の中で「今日の壁打ちが終わった時の着地点」を引き出し、ユーザーの合意を得て確定させます）
+          </p>
+          <div id="goal-confirm-box" class="hidden mt-2 p-2 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-between gap-2">
+            <span class="text-[10px] text-sky-300 font-bold">参謀からゴールを提案中。このゴールで合意しますか？</span>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="approveGoal()" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold shadow-sm cursor-pointer">
+                ✅ 合意・確定
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 📑 2. 検討テーマ ＆ 抽出された論点 (What) -->
+        <div id="board-what-card" class="p-3 rounded-xl border t-card transition-all interactive-card shadow-sm">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-black tracking-wide text-indigo-400 flex items-center gap-1.5">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>2. 検討テーマ ＆ 抽出論点 (What)</span>
+            </h3>
+            <span id="board-what-count" class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full t-card-sub border">0件</span>
+          </div>
+          <div id="board-what-list" class="space-y-1.5 text-xs">
+            <p class="text-[11px] t-text-muted">（確定したゴールに向け、各専門視点から深掘りした論点を整理します）</p>
+          </div>
+        </div>
+
+        <!-- ⚠️ 3. 矛盾・論理の穴・未決事項 (Watch Out) -->
+        <div id="board-watch-card" class="p-3 rounded-xl border border-rose-500/30 bg-rose-500/5 transition-all interactive-card shadow-sm">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xs font-black tracking-wide text-rose-400 flex items-center gap-1.5">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>3. 迷子・矛盾・落とし穴 (Watch Out)</span>
+            </h3>
+            <span class="text-[9px] font-mono font-bold text-rose-400">手綱チェック</span>
+          </div>
+          <div id="board-watch-content" class="text-xs text-rose-200 font-medium leading-relaxed space-y-1 break-words">
+            <p class="text-[11px] text-slate-400 font-normal">（話の矛盾、心理的離脱、運用の形骸化リスクがここに可視化されます）</p>
+          </div>
+        </div>
+
+        <!-- 💡 4. 合意要約 ＆ 次の一手 (Action) カード -->
+        <div id="board-action-card" class="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 transition-all interactive-card shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <h3 class="text-xs font-black tracking-wide text-amber-400 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>4. 合意要約 ＆ 発射台パッケージ (Action)</span>
+            </h3>
+            <span id="board-action-badge" class="text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30">
+              📝 策定中
+            </span>
+          </div>
+          <div id="board-action-content" class="text-xs t-text-main font-medium leading-relaxed space-y-2 break-words">
+            <p class="text-[11px] t-text-muted">（テーマが煮詰まったら、合意事項と初手を提示し、ユーザー承認を得ます）</p>
+          </div>
+          <div id="action-confirm-box" class="hidden mt-2.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-2">
+            <span class="text-[10px] text-amber-300 font-bold">発射台が完成しました！このアクションで合意してセッションを終了しますか？</span>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="approveActionAndComplete()" class="px-3 py-1 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black shadow-md cursor-pointer">
+                🎉 OK！合意完了
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 黒板最下部：コックピット引き継ぎ完了アンロックボタン -->
+      <div class="pt-2 border-t border-inherit flex flex-col gap-1.5 shrink-0">
+        <button id="btn-unlock-cockpit-transfer" onclick="exportToCockpitJson()" disabled class="w-full py-2 px-3 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-not-allowed opacity-60">
+          <i data-lucide="lock" id="icon-lock-transfer" class="w-3.5 h-3.5"></i>
+          <span id="label-lock-transfer">4番のアクション合意完了でコックピット引き継ぎ解放</span>
+        </button>
+        <div class="flex items-center justify-between text-[10px] t-text-muted font-mono px-1">
+          <span class="flex items-center gap-1"><i data-lucide="database" class="w-3 h-3 text-sky-400"></i> 自動保存連動済</span>
+          <span id="board-last-saved-time">最終保存: --:--</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         【中央ペイン (2.5fr)】音声 ＆ 思考入力ワークスペース
+         ========================================================= -->
+    <section class="flex flex-col h-full min-h-0 min-w-0 border rounded-2xl p-3.5 t-pane shadow-sm transition-colors duration-200 overflow-hidden relative">
+      
+      <!-- 中央ヘッダー -->
+      <div class="flex items-center justify-between pb-2 border-b border-inherit shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="p-1.5 rounded-lg bg-rose-500/15 text-rose-400 shrink-0">
+            <i data-lucide="mic" class="w-4 h-4"></i>
+          </span>
+          <div class="min-w-0">
+            <h2 class="font-black text-xs tracking-wide t-text-main truncate">発話・入力ワークスペース</h2>
+            <p class="text-[10px] t-text-muted truncate">声でバーっと話して推敲・送信</p>
+          </div>
+        </div>
+        <button onclick="clearInputText()" class="text-[10px] t-text-muted hover:text-rose-400 font-bold transition cursor-pointer">
+          クリア
+        </button>
+      </div>
+
+      <!-- マイク起動エリア -->
+      <div id="mic-status-box" class="my-2 p-2.5 rounded-xl t-card border flex items-center justify-between gap-2 shrink-0 transition-all shadow-sm">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <button id="btn-mic" onclick="toggleSpeechRecognition()" class="w-10 h-10 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 border border-rose-500/30 flex items-center justify-center transition shadow-sm shrink-0 cursor-pointer" title="マイクで話す（もう一度押して停止）">
+            <i data-lucide="mic" id="mic-icon" class="w-5 h-5"></i>
+          </button>
+          <div class="min-w-0">
+            <p id="mic-status-label" class="text-xs font-black t-text-main truncate">マイク: 停止中</p>
+            <p class="text-[10px] t-text-muted">ボタンを押して話してください</p>
+          </div>
+        </div>
+        <div id="mic-indicator-dots" class="hidden flex items-center gap-1 shrink-0">
+          <span class="w-1.5 h-3.5 bg-rose-500 rounded-full animate-bounce"></span>
+          <span class="w-1.5 h-4.5 bg-rose-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-3 bg-rose-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+        </div>
+      </div>
+
+      <!-- 入力テキストエリア ＆ 画像添付プレビュー -->
+      <div class="flex-1 min-h-0 flex flex-col gap-1.5 my-1 overflow-hidden">
+        <div class="flex items-center justify-between text-[11px] t-text-muted px-1 font-bold shrink-0">
+          <div class="flex items-center gap-2">
+            <span>発話・入力テキスト</span>
+            <!-- 画像添付ボタン -->
+            <label class="cursor-pointer text-[10px] flex items-center gap-1 text-sky-400 hover:text-sky-300 transition" title="画像ファイルを添付（Ctrl+Vでの貼り付けも可能）">
+              <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
+              <span>画像添付</span>
+              <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)">
+            </label>
+          </div>
+
+          <!-- ✨ スッキリ推敲ボタン -->
+          <button id="btn-polish-input" onclick="polishInputWithAI()" class="px-2.5 py-0.5 rounded-md bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 text-[10px] font-black flex items-center gap-1 transition shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" title="話した内容を情報量100%保持のまま句点・段落を美しく整えます">
+            <i data-lucide="sparkles" id="polish-icon" class="w-3 h-3 text-purple-400"></i>
+            <span id="polish-btn-label">✨ スッキリ推敲</span>
+          </button>
+        </div>
+
+        <!-- 添付画像プレビューバッジ -->
+        <div id="image-preview-container" class="hidden relative p-1.5 rounded-lg border t-card-sub flex items-center gap-2 shrink-0">
+          <img id="image-preview-thumb" src="" alt="添付プレビュー" class="w-8 h-8 rounded object-cover border border-slate-700">
+          <span id="image-preview-name" class="text-[10px] font-mono text-slate-300 truncate max-w-[150px]">image.png</span>
+          <button onclick="removeAttachedImage()" class="ml-auto p-1 text-slate-400 hover:text-rose-400 cursor-pointer" title="画像を削除">
+            <i data-lucide="x" class="w-3 h-3"></i>
+          </button>
+        </div>
+
+        <textarea id="user-input-text" placeholder="マイクで話すか自由に入力してください。（Ctrl+Vで画像貼り付け可能。「✨ スッキリ推敲」で整います）" class="w-full flex-1 p-3 t-card border rounded-xl text-xs t-text-main font-medium placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none leading-relaxed transition shadow-inner"></textarea>
+
+        <!-- 生音声確認アコーディオン -->
+        <div id="raw-voice-accordion" class="hidden flex flex-col border border-inherit rounded-xl overflow-hidden bg-slate-900/40 text-[10px] shrink-0">
+          <button type="button" onclick="toggleRawVoiceView()" class="w-full px-2.5 py-1 text-slate-400 flex items-center justify-between hover:t-text-main cursor-pointer font-mono">
+            <span>🎙️ 推敲前の生発話テキストを確認</span>
+            <i data-lucide="chevron-down" id="raw-voice-icon" class="w-3 h-3 transition-transform"></i>
+          </button>
+          <div id="raw-voice-body" class="hidden p-2 text-slate-300 border-t border-inherit/40 font-mono space-y-1 select-all break-words">
+            <p id="raw-voice-text"></p>
+            <div class="flex justify-end gap-2 text-[9px] pt-1 border-t border-inherit/30">
+              <button onclick="restoreRawText()" class="text-sky-400 font-bold hover:underline">↩️ 生テキストに戻す</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 下部コントロール：迷子レスキュー ＆ 送信ボタン -->
+      <div class="pt-2 border-t border-inherit flex flex-col gap-2 shrink-0">
+        <div class="flex items-center justify-between text-[10px] t-text-muted font-mono px-0.5">
+          <span>迷子時の手綱アクション:</span>
+          <span class="text-[9px] text-slate-500">困った時に即発動</span>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
+          <button onclick="triggerRescueAction('lost')" class="py-1.5 px-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1 text-[10px] shadow-sm transition active:scale-95 cursor-pointer truncate" title="迷子になった時に現在地を要約">
+            <i data-lucide="compass" class="w-3 h-3 text-amber-400 shrink-0"></i>
+            <span>🧭 一旦整理</span>
+          </button>
+
+          <button onclick="triggerRescueAction('summarize')" class="py-1.5 px-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 flex items-center justify-center gap-1 text-[10px] shadow-sm transition active:scale-95 cursor-pointer truncate" title="結論をまとめて合意に進む">
+            <i data-lucide="check-check" class="w-3 h-3 text-indigo-400 shrink-0"></i>
+            <span>📋 結論まとめ</span>
+          </button>
+
+          <button onclick="triggerRescueAction('challenge')" class="py-1.5 px-1 rounded-lg t-card-sub hover:t-card border text-rose-400 flex items-center justify-center gap-1 text-[10px] shadow-sm transition active:scale-95 cursor-pointer truncate" title="あえて死角やリスクを突かせる">
+            <i data-lucide="flame" class="w-3 h-3 text-rose-400 shrink-0"></i>
+            <span>⚡ 死角を突く</span>
+          </button>
+        </div>
+
+        <button id="btn-send-message" onclick="handleSendMessage()" class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95 cursor-pointer">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>🚀 参謀に伝える (Ctrl+Enter)</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         【右ペイン (3.5fr)】インタビュアーチャット（VOICEVOX読み上げ完備）
+         ========================================================= -->
+    <section class="flex flex-col h-full min-h-0 min-w-0 border rounded-2xl p-3.5 t-pane shadow-sm transition-colors duration-200 overflow-hidden relative">
+      
+      <!-- 対話ヘッダー：ペルソナ ＆ 全ログコピー -->
+      <div class="flex items-center justify-between pb-2 border-b border-inherit shrink-0 gap-1.5">
+        <div class="flex items-center gap-1.5 min-w-0 flex-1">
+          <div class="relative">
+            <button id="btn-persona-dropdown" onclick="togglePersonaDropdown(event)" class="px-2.5 py-1 rounded-lg t-card border hover:border-sky-500 text-xs font-bold flex items-center gap-1.5 transition shadow-sm cursor-pointer">
+              <span id="persona-speak-dot" class="w-2 h-2 rounded-full bg-sky-400 shrink-0"></span>
+              <span id="persona-title-label" class="text-sky-300 font-bold truncate max-w-[190px]">総合PMファシリテーター</span>
+              <i data-lucide="chevron-down" class="w-3 h-3 opacity-60 shrink-0"></i>
+            </button>
+
+            <!-- ペルソナ手動切替メニュー -->
+            <div id="menu-persona-dropdown" class="hidden absolute left-0 top-full mt-1 w-64 t-card border rounded-xl shadow-2xl py-1 z-30 text-xs">
+              <button onclick="manuallySwitchPersona('pm')" class="w-full px-3 py-1.5 text-left hover:bg-sky-500/10 flex items-center justify-between">
+                <span>総合PMファシリテーター</span>
+                <span class="text-[9px] text-sky-400 font-mono">全体手綱</span>
+              </button>
+              <button onclick="manuallySwitchPersona('prompt')" class="w-full px-3 py-1.5 text-left hover:bg-sky-500/10 flex items-center justify-between">
+                <span>プロンプトエンジニア</span>
+                <span class="text-[9px] text-purple-400 font-mono">AI特命</span>
+              </button>
+              <button onclick="manuallySwitchPersona('architect')" class="w-full px-3 py-1.5 text-left hover:bg-sky-500/10 flex items-center justify-between">
+                <span>システムアーキテクト / SE</span>
+                <span class="text-[9px] text-emerald-400 font-mono">技術設計</span>
+              </button>
+              <button onclick="manuallySwitchPersona('designer')" class="w-full px-3 py-1.5 text-left hover:bg-sky-500/10 flex items-center justify-between">
+                <span>UI/UXデザイナー</span>
+                <span class="text-[9px] text-amber-400 font-mono">体験設計</span>
+              </button>
+              <button onclick="manuallySwitchPersona('consultant')" class="w-full px-3 py-1.5 text-left hover:bg-sky-500/10 flex items-center justify-between">
+                <span>戦略・業務コンサルタント</span>
+                <span class="text-[9px] text-rose-400 font-mono">論理戦略</span>
+              </button>
+            </div>
+          </div>
+
+          <span id="persona-role-badge" class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 shrink-0">
+            全体手綱
+          </span>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0 font-mono text-[10px]">
+          <button onclick="copyFullConversationLog()" class="px-2 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 font-bold flex items-center gap-1 shadow-sm transition active:scale-95 cursor-pointer" title="ユーザーとAIの全対話ログと黒板スナップショットを一括コピー">
+            <i data-lucide="clipboard-copy" class="w-3 h-3 text-indigo-400"></i>
+            <span>📋 全ログコピー</span>
+          </button>
+          <button onclick="clearChatHistory()" class="p-1 text-slate-400 hover:text-rose-400 transition cursor-pointer" title="チャット履歴クリア">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- チャット履歴エリア -->
+      <div id="chat-messages-container" class="flex-1 min-h-0 overflow-y-auto py-3 space-y-3 pr-1"></div>
+
+      <!-- AI思考中インジケーター -->
+      <div id="ai-thinking-indicator" class="hidden py-1.5 px-3 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-400 flex items-center gap-2 shrink-0 animate-pulse font-mono shadow-sm">
+        <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
+        <span id="ai-thinking-text">思考の構造化 ＆ 次の問いを生成中...</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= 👑 総合ガイドブック（完全体系化・全5章構造） モーダル ================= -->
+  <div id="guide-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="t-card border rounded-2xl max-w-5xl w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-inherit shrink-0">
+        <h3 class="font-black text-base t-text-main flex items-center gap-2">
+          <i data-lucide="book-open" class="w-5 h-5 text-amber-400"></i>
+          <span>Thinking Studio 総合ガイド ＆ 開発エコシステム運用体系</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 font-bold">新体系 v3.0</span>
+        </h3>
+        <button onclick="closeGuideModal()" class="t-text-muted hover:t-text-main p-1 rounded-lg transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- ガイド タブ切り替えバー（全5章固定体系） -->
+      <div class="flex items-center gap-2 border-b border-inherit py-2 shrink-0 overflow-x-auto font-bold text-xs">
+        <button id="guide-tab-btn-1" onclick="switchGuideTab(1)" class="px-3.5 py-1.5 rounded-lg bg-sky-600 text-white shadow-sm flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
+          <i data-lucide="network" class="w-3.5 h-3.5"></i> ① 全体連携マップ ＆ 終了定義
+        </button>
+        <button id="guide-tab-btn-2" onclick="switchGuideTab(2)" class="px-3.5 py-1.5 rounded-lg t-card-sub border t-text-muted hover:t-text-main flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
+          <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-400"></i> ② コンセプト ＆ 3ペイン役割
+        </button>
+        <button id="guide-tab-btn-3" onclick="switchGuideTab(3)" class="px-3.5 py-1.5 rounded-lg t-card-sub border t-text-muted hover:t-text-main flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
+          <i data-lucide="play-circle" class="w-3.5 h-3.5 text-emerald-400"></i> ③ 基本操作フロー (Step1〜4)
+        </button>
+        <button id="guide-tab-btn-4" onclick="switchGuideTab(4)" class="px-3.5 py-1.5 rounded-lg t-card-sub border t-text-muted hover:t-text-main flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 text-purple-400"></i> ④ 主要機能詳細ガイド
+        </button>
+        <button id="guide-tab-btn-5" onclick="switchGuideTab(5)" class="px-3.5 py-1.5 rounded-lg t-card-sub border t-text-muted hover:t-text-main flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-teal-400"></i> ⑤ 履歴管理 ＆ バックアップ
+        </button>
+      </div>
+
+      <!-- ガイド 本文スクロールエリア -->
+      <div class="flex-1 overflow-y-auto py-4 pr-1 text-xs t-text-sub leading-relaxed space-y-4 font-medium">
+        
+        <!-- ================= 第1章：全体連携マップ ＆ 終了定義 (最新版) ================= -->
+        <div id="guide-tab-1" class="space-y-4">
+          <div class="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-xs">
+            <span class="font-black text-sky-300 block mb-1">💡 思考から現場管制・物理保管までを一望する「4階層エコシステム」</span>
+            <p class="text-slate-200 leading-relaxed">
+              私たちは各ツールに役割を明確に分担させています。<br>
+              <strong>「Thinking Studioで全領域の思考を受け止め」「コックピットで人生・全業務のスケジュール伝票を統括」</strong><br>
+              そして<strong>「巨大化した現場開発はスタジオマネージャー（現場管制塔）が一元管理し、GitHubへ安全に格納する」</strong>ことで、思考の迷子と現場のデグレを完全ゼロにします。
+            </p>
+          </div>
+
+          <!-- ビジュアル相関ダイアグラム (新体系) -->
+          <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3.5">
+            
+            <div class="flex justify-center">
+              <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-inner">
+                <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+                <span>脳内のモヤモヤ・柔らかい発想・新機能構想（システム／非システム問わず）</span>
+              </span>
+            </div>
+
+            <div class="flex justify-center -my-1 text-slate-500"><i data-lucide="arrow-down" class="w-4 h-4"></i></div>
+
+            <!-- ① Thinking Studio（現在地） -->
+            <div class="p-3.5 rounded-xl border-2 border-sky-500/80 bg-sky-500/10 shadow-lg relative">
+              <div class="absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full bg-sky-500 text-slate-950 text-[10px] font-black font-mono tracking-wider flex items-center gap-1">
+                <span>📍 ここが現在地！［自作ツール ①］</span>
+              </div>
+              <div class="flex items-center justify-between mb-1.5">
+                <h4 class="font-black text-sm text-sky-300 flex items-center gap-2">
+                  <i data-lucide="brain-circuit" class="w-4 h-4 text-sky-400"></i>
+                  <span>① Thinking Studio（思考構造化 ＆ 発射台ハブ）</span>
+                </h4>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-200 font-bold border border-sky-500/40">構想発射台</span>
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed mb-2">
+                思考を黒板に構造化し、<strong>「コックピット用タスク伝票（10文字）」</strong>と、システムの場合は<strong>「現場投入用プロンプト・仕様」</strong>を完成させてクローズする発射台。
+              </p>
+              <div class="p-2 rounded bg-slate-900/80 border border-sky-500/30 flex items-center justify-between text-[11px]">
+                <span class="text-sky-300 font-bold">🏁 ゴール（出口）：</span>
+                <span class="text-slate-100 font-mono font-bold">コックピット引き継ぎ完了で即セッション終了</span>
+              </div>
+            </div>
+
+            <div class="flex justify-center -my-1 text-slate-500"><i data-lucide="arrow-down" class="w-4 h-4"></i></div>
+
+            <!-- ② Wish & Action コックピット -->
+            <div class="p-3.5 rounded-xl border border-indigo-500/40 bg-indigo-500/5 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <h4 class="font-black text-xs text-indigo-300 flex items-center gap-1.5">
+                  <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-indigo-400"></i>
+                  <span>② Wish & Action コックピット（全体司令塔 ＆ 統合スケジュール伝票盤）</span>
+                </h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-bold">［自作ツール ②］</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                全案件・雑務・手作業の「納期と人間のキャパシティ」を一元管理。大枠の開発伝票（大日程）を発行してスタジオマネージャーへ受け渡し。
+              </p>
+            </div>
+
+            <div class="flex justify-center -my-1 text-cyan-500"><i data-lucide="arrow-down" class="w-4 h-4"></i></div>
+
+            <!-- ★ スタジオマネージャー (昇格) -->
+            <div class="p-3.5 rounded-xl border-2 border-cyan-500/60 bg-cyan-950/20 shadow-md space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-black text-xs text-cyan-300 flex items-center gap-1.5">
+                  <i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-400"></i>
+                  <span>★ スタジオマネージャー（開発管制塔 ＆ DevOps現場コックピット）</span>
+                </h4>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500 text-slate-950 font-black">［昇格自作ツール ③］</span>
+              </div>
+              <p class="text-[11px] text-slate-200 leading-relaxed">
+                <strong>【開発現場の現場工場長（旧④システム台帳を内包）】</strong><br>
+                ・4つのAI Studio ID監視 ＆ トークン残量管理<br>
+                ・チャット予約（文脈・ノウハウ保持）<br>
+                ・上流バージョン仮採番 ＆ 統合成果物台帳（過去履歴・復旧マップ）
+              </p>
+            </div>
+
+            <div class="flex justify-center -my-1 text-slate-500"><i data-lucide="arrow-down" class="w-4 h-4"></i></div>
+
+            <!-- ③ 実装 ＆ 門番 ＆ 保管 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-lg border border-purple-500/40 bg-purple-500/5 space-y-1">
+                <span class="font-bold text-purple-300 flex items-center gap-1">
+                  <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+                  <span>③ Google AI Studio (4 IDs) ＆ 人間ゲート</span>
+                </span>
+                <p class="text-[11px] text-slate-300">予約されたチャットで高速コード生成。人間がデグレ確認しバージョン確定。</p>
+              </div>
+
+              <div class="p-3 rounded-lg border border-emerald-500/40 bg-emerald-500/5 space-y-1">
+                <span class="font-bold text-emerald-300 flex items-center gap-1">
+                  <i data-lucide="github" class="w-3.5 h-3.5"></i>
+                  <span>🔒 GitHub / GitHub Pages</span>
+                </span>
+                <p class="text-[11px] text-slate-300">物理金庫への完全セーブ ＆ Web即座配信。コミット完了で台帳と伝票を完了へ。</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 終了定義（DoD） -->
+          <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1.5">
+            <h4 class="font-black text-xs text-emerald-300 flex items-center gap-1.5">
+              <i data-lucide="flag" class="w-4 h-4 text-emerald-400"></i>
+              <span>Thinking Studioの終了定義（Definition of Done）</span>
+            </h4>
+            <p class="text-[11px] text-slate-200 leading-relaxed">
+              1. 黒板に<strong>「コックピット用タスク伝票（10文字目安）」</strong>が確定していること。<br>
+              2. システム開発の場合は<strong>「スタジオマネージャー投入用の仕様・プロンプト」</strong>が生成されていること。<br>
+              3. 「コックピット引き継ぎ」を押した瞬間に、本セッションは大成功で終了です。
+            </p>
+          </div>
+        </div>
+
+        <!-- ================= 第2章：コンセプト ＆ 3ペイン役割 ================= -->
+        <div id="guide-tab-2" class="hidden space-y-3.5">
+          <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1.5">
+            <h4 class="font-black text-xs text-amber-300">💡 ツールの思想・狙い</h4>
+            <p class="leading-relaxed">
+              「頭の中に漠然としたアイデアはあるが、まとまっていない」「いきなり仕様書を書こうとすると手が止まる」という状態を打破するための発射台です。<br>
+              人間は思いつくままに声で話し、AI参謀がリアルタイムに板書・構造化し、次の具体的な行動へと射出します。
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl border t-card space-y-2">
+              <div class="flex items-center gap-2 text-indigo-400 font-bold text-xs">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>【左ペイン】構造化黒板</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                対話内容が「Why（背景）」「Goal（着地点）」「What（論点）」「WatchOut（落とし穴）」「Action（発射台）」の5領域に自動マッピング。思考がリアルタイムに整理されます。
+              </p>
+            </div>
+
+            <div class="p-3 rounded-xl border t-card space-y-2">
+              <div class="flex items-center gap-2 text-rose-400 font-bold text-xs">
+                <i data-lucide="mic" class="w-4 h-4"></i>
+                <span>【中央ペイン】入力ステージ</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                マイクボタンで気兼ねなくベタ書き発話。「✨ スッキリ推敲」ボタンを押せば、情報量を100%保ったまま美しい日本語に自動整形して参謀へ渡せます。
+              </p>
+            </div>
+
+            <div class="p-3 rounded-xl border t-card space-y-2">
+              <div class="flex items-center gap-2 text-sky-400 font-bold text-xs">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+                <span>【右ペイン】名インタビュアー</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                長々と講釈を垂れず、鳥の目（全体構造）と虫の目（具体アクション）を行き来しながらあなたの思考を深掘り。VOICEVOX連携で耳から対話を聞くことも可能です。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= 第3章：基本操作フロー (Step1〜4) ================= -->
+        <div id="guide-tab-3" class="hidden space-y-3.5">
+          <div class="p-3.5 rounded-xl t-card-sub border space-y-3">
+            <h4 class="font-black text-sm text-emerald-400">標準的な壁打ちセッションの進め方（4ステップ）</h4>
+            
+            <div class="space-y-2.5 text-xs">
+              <div class="p-3 rounded-lg border t-card space-y-1">
+                <span class="font-bold text-emerald-300 flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px] flex items-center justify-center font-bold">1</span>
+                  <span>Step 1: 傾聴 ＆ 本質ゴール探求中</span>
+                </span>
+                <p class="text-slate-300 leading-relaxed pl-5 text-[11px]">
+                  中央のマイクを押して、今頭にある構想をバーっとお話しください。参謀が発想の動機（Why）を黒板に書き留め、「今日の着地点（ゴール）」を提案します。「✅ 合意・確定」を押してゴールを確定させます。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-lg border t-card space-y-1">
+                <span class="font-bold text-amber-300 flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-mono text-[10px] flex items-center justify-center font-bold">2</span>
+                  <span>Step 2: 論点抽出 ＆ 深掘りインタビュー中</span>
+                </span>
+                <p class="text-slate-300 leading-relaxed pl-5 text-[11px]">
+                  確定したゴールに向け、参謀が問いを投げかけます。答えていくと、左側黒板の「検討テーマ (What)」や「落とし穴 (Watch Out)」に論点が整理されていきます。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-lg border t-card space-y-1">
+                <span class="font-bold text-sky-300 flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded-full bg-sky-500/20 text-sky-300 font-mono text-[10px] flex items-center justify-center font-bold">3</span>
+                  <span>Step 3: アクション ＆ プロンプト確認中</span>
+                </span>
+                <p class="text-slate-300 leading-relaxed pl-5 text-[11px]">
+                  論点が出揃ったら、黒板の4番に「合意サマリー」「初手」「コックピット用タスク（10文字）」、そして必要に応じて「スタジオマネージャー投入用プロンプト」が生成されます。「🎉 OK！合意完了」を押します。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-lg border t-card space-y-1">
+                <span class="font-bold text-purple-300 flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 font-mono text-[10px] flex items-center justify-center font-bold">4</span>
+                  <span>Step 4: 完全合意済！発射台完成（コックピット引き継ぎ）</span>
+                </span>
+                <p class="text-slate-300 leading-relaxed pl-5 text-[11px]">
+                  最下部の「コックピット引き継ぎ」ボタンが黄金にアンロックされます。ボタンを押してファイルを保存し、コックピットまたはスタジオマネージャーへ向かいましょう！
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= 第4章：主要機能詳細ガイド ================= -->
+        <div id="guide-tab-4" class="hidden space-y-3.5">
+          <div class="space-y-3 text-xs">
+            
+            <!-- スッキリ推敲 -->
+            <div class="p-3 rounded-xl border t-card-sub space-y-1.5">
+              <h5 class="font-black text-purple-400 flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>✨ スッキリ推敲 ＆ 生発話アコーディオン</span>
+              </h5>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                音声入力特有の句読点のないベタ書きテキストを、話し手のアイデアや熱量、数字を100%保持したまま美しい日本語に自動整形します。推敲前の生テキストは下部のアコーディオンからいつでも確認・復元できます。
+              </p>
+            </div>
+
+            <!-- 3大レスキュー -->
+            <div class="p-3 rounded-xl border t-card-sub space-y-2">
+              <h5 class="font-black text-amber-400 flex items-center gap-1.5">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+                <span>3大迷子レスキューボタンの使い方</span>
+              </h5>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+                <div class="p-2 rounded bg-slate-900/60 border border-amber-500/30">
+                  <span class="font-bold text-amber-300 block mb-0.5">🧭 一旦整理</span>
+                  <span>発散しすぎて何の話をしているか迷子になった時、現在地と「いま決めるべき問い」を整理させます。</span>
+                </div>
+                <div class="p-2 rounded bg-slate-900/60 border border-indigo-500/30">
+                  <span class="font-bold text-indigo-300 block mb-0.5">📋 結論まとめ</span>
+                  <span>アイデアが出揃い、発射台（伝票やプロンプト）に落とし込んで早くクローズさせたい時に押します。</span>
+                </div>
+                <div class="p-2 rounded bg-slate-900/60 border border-rose-500/30">
+                  <span class="font-bold text-rose-300 block mb-0.5">⚡ 死角を突く</span>
+                  <span>一見良さそうだが何か致命的な穴がないか、参謀にあえて厳しいツッコミを入れさせます。</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5大ペルソナ -->
+            <div class="p-3 rounded-xl border t-card-sub space-y-1.5">
+              <h5 class="font-black text-sky-400 flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>5大専門ペルソナ切替</span>
+              </h5>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                対話相手の専門視点を「総合PM（全体手綱）」「プロンプトエンジニア（AI特命）」「システムアーキテクト（技術）」「UI/UXデザイナー（体験）」「戦略コンサル（論理）」に手動または自動で切り替えられます。
+              </p>
+            </div>
+
+            <!-- VOICEVOX -->
+            <div class="p-3 rounded-xl border t-card-sub space-y-1.5">
+              <h5 class="font-black text-teal-400 flex items-center gap-1.5">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                <span>VOICEVOX 音声読み上げ連携</span>
+              </h5>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                PC上でVOICEVOXを起動しておけば、チャット横のスピーカーボタンから参謀のセリフをリアルな音声で読み上げます。マークダウン記号は自動除去され、聞き取りやすい自然な日本語で発話されます。
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= 第5章：履歴管理 ＆ バックアップ ================= -->
+        <div id="guide-tab-5" class="hidden space-y-3.5">
+          <div class="p-3.5 rounded-xl t-card-sub border space-y-3 text-xs">
+            <h4 class="font-black text-teal-400 text-sm">思考資産の安全管理とバックアップ方針</h4>
+            
+            <div class="space-y-2 leading-relaxed text-[11px] text-slate-300">
+              <p>
+                <strong>1. 永続的な自動保存：</strong><br>
+                対話を行うたびにブラウザ内部（LocalStorage）へ自動保存されます。「コックピット引き継ぎ」や「新規セッション作成」を行っても、過去のセッションが勝手に消えることは絶対にありません。
+              </p>
+              <p>
+                <strong>2. ヘッダーの件数表示 ＆ セッション一覧：</strong><br>
+                ヘッダーのセッション名横に「現在何件保存されているか」が常時バッジ表示されます。クリックすると過去のセッション一覧が開き、いつでも過去の思考を呼び出せます。
+              </p>
+              <p>
+                <strong>3. 安全な手動削除（二重確認アラート）：</strong><br>
+                不要になったセッションを一覧から削除する際は、誤操作防止のため「本当に『〇〇』を削除しますか？」と確認ダイアログが表示されます。
+              </p>
+              <p>
+                <strong>4. 万が一の保険（全データJSONバックアップ ＆ 復元）：</strong><br>
+                セッション一覧モーダル下部の「📥 バックアップ保存」を押すことで、過去の全相談データを1つのJSONファイルとしてPCに保管できます。「📤 バックアップ復元」から一瞬で元通りに復旧できます。
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-3 border-t border-inherit flex justify-end shrink-0">
+        <button onclick="closeGuideModal()" class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">閉じる</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- API ＆ VOICEVOX設定モーダル -->
+  <div id="settings-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="t-card border rounded-2xl max-w-md w-full p-5 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-inherit">
+        <h3 class="font-black text-sm t-text-main flex items-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4 text-sky-400"></i> API ＆ VOICEVOX設定
+        </h3>
+        <button onclick="closeSettingsModal()" class="t-text-muted hover:t-text-main cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="py-3 space-y-3 text-xs">
+        <div>
+          <label class="block font-bold t-text-main mb-1">Google AI Studio (Gemini) API Key</label>
+          <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full p-2 t-card border rounded-lg font-mono t-text-main focus:outline-none focus:border-sky-500">
+        </div>
+
+        <div>
+          <label class="block font-bold t-text-main mb-1">使用モデル（gemini-3.5-flash-lite 固定）</label>
+          <input type="text" id="model-name-display" value="gemini-3.5-flash-lite" readonly class="w-full p-2 t-card-sub border rounded-lg font-mono text-slate-400 bg-slate-900/50 cursor-not-allowed">
+        </div>
+
+        <div class="border-t border-inherit/60 pt-2 space-y-2">
+          <h4 class="font-black text-emerald-400 flex items-center gap-1.5">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> VOICEVOX 連携設定
+          </h4>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">VOICEVOX サーバーURL</label>
+            <input type="text" id="voicevox-url-input" value="http://127.0.0.1:50021" class="w-full p-2 t-card border rounded-lg font-mono t-text-main focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">話者スピーカー選択</label>
+            <select id="voicevox-speaker-select" class="w-full p-2 t-card border rounded-lg font-mono t-text-main focus:outline-none focus:border-emerald-500">
+              <optgroup label="参謀・男性キャラクター">
+                <option value="11">玄野武弘（ノーマル） [ID: 11]</option>
+                <option value="12">白上虎太郎（ふつう） [ID: 12]</option>
+                <option value="13">青山流星（ノーマル） [ID: 13]</option>
+                <option value="52">雀松朱司（ノーマル） [ID: 52]</option>
+              </optgroup>
+              <optgroup label="参謀・女性キャラクター">
+                <option value="46">小夜/SAYO（ノーマル） [ID: 46]</option>
+                <option value="2">四国めたん（ノーマル） [ID: 2]</option>
+                <option value="8">春日部つむぎ（ノーマル） [ID: 8]</option>
+                <option value="3">ずんだもん（ノーマル） [ID: 3]</option>
+                <option value="14">冥鳴ひまり（ノーマル） [ID: 14]</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-inherit flex justify-end gap-2">
+        <button onclick="closeSettingsModal()" class="px-3 py-1.5 t-text-muted hover:t-text-main text-xs font-bold cursor-pointer">キャンセル</button>
+        <button onclick="saveSettings()" class="px-4 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg text-xs shadow transition cursor-pointer">保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 過去セッション一覧 ＆ バックアップ管理モーダル -->
+  <div id="sessions-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="t-card border rounded-2xl max-w-xl w-full p-5 shadow-2xl relative max-h-[88vh] flex flex-col">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-inherit shrink-0">
+        <h3 class="font-black text-sm t-text-main flex items-center gap-2">
+          <i data-lucide="folder-clock" class="w-4 h-4 text-sky-400"></i>
+          <span>思考セッション履歴一覧</span>
+          <span id="modal-session-total-count" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30">1件</span>
+        </h3>
+        <button onclick="closeSessionsModal()" class="t-text-muted hover:t-text-main cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="my-2 shrink-0">
+        <input type="text" id="session-search-input" oninput="filterSessionsList()" placeholder="キーワードで過去の相談セッションを検索..." class="w-full p-2 t-card border rounded-lg text-xs t-text-main focus:outline-none focus:border-sky-500">
+      </div>
+
+      <!-- セッションカード一覧スクロールエリア -->
+      <div id="sessions-list-container" class="flex-1 overflow-y-auto py-2 space-y-2 text-xs"></div>
+
+      <!-- バックアップ・復元 ＆ 新規作成フッターバー -->
+      <div class="pt-3 border-t border-inherit flex flex-col gap-2 shrink-0">
+        <div class="flex items-center justify-between gap-2">
+          
+          <!-- バックアップ・復元ボタン群 -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="exportAllSessionsBackup()" class="px-2.5 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 font-bold text-[11px] flex items-center gap-1 shadow-sm transition active:scale-95 cursor-pointer" title="全セッションを一括バックアップファイル(JSON)としてダウンロード">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-teal-400"></i>
+              <span>📥 バックアップ保存</span>
+            </button>
+
+            <label class="px-2.5 py-1.5 rounded-lg t-card-sub hover:t-card border text-slate-300 font-bold text-[11px] flex items-center gap-1 shadow-sm transition active:scale-95 cursor-pointer" title="保存したバックアップJSONファイルからセッションを復元">
+              <i data-lucide="upload" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>📤 復元</span>
+              <input type="file" id="backup-file-input" accept=".json,application/json" class="hidden" onchange="importSessionsBackup(event)">
+            </label>
+          </div>
+
+          <!-- 新規セッション開始 ＆ 閉じる -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="createNewSessionFromModal()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg text-xs flex items-center gap-1 shadow cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新規作成
+            </button>
+            <button onclick="closeSessionsModal()" class="px-3 py-1.5 t-card border rounded-lg text-xs font-bold cursor-pointer">閉じる</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= JavaScript プログラム ================= -->
+  <script>
+    const STORAGE_KEY_SESSIONS = 'thinking_studio_sessions_v1';
+    const STORAGE_KEY_SESSIONS_OLD = 'thinking_studio_sessions';
+    const STORAGE_KEY_ACTIVE_SESSION_ID = 'thinking_studio_active_id';
+    const COCKPIT_STORAGE_KEY_API_KEY = 'wish_action_gemini_key';
+    const COCKPIT_INBOX_KEY = 'wish_action_studio_inbox_queue';
+    const STORAGE_VOICEVOX_URL = 'ts_voicevox_url';
+    const STORAGE_VOICEVOX_SPEAKER = 'ts_voicevox_speaker';
+
+    const FIXED_MODEL_NAME = 'gemini-3.5-flash-lite';
+
+    const PERSONA_CONFIGS = {
+      pm: { name: '総合PMファシリテーター', roleBadge: '全体手綱', iconBg: 'from-sky-500 to-indigo-600', color: 'text-sky-300' },
+      prompt: { name: 'プロンプトエンジニア', roleBadge: 'AI特命', iconBg: 'from-purple-500 to-indigo-600', color: 'text-purple-300' },
+      architect: { name: 'システムアーキテクト / SE', roleBadge: '技術設計', iconBg: 'from-emerald-500 to-teal-600', color: 'text-emerald-300' },
+      designer: { name: 'UI/UXデザイナー', roleBadge: '体験設計', iconBg: 'from-amber-500 to-orange-600', color: 'text-amber-300' },
+      consultant: { name: '戦略・業務コンサルタント', roleBadge: '論理戦略', iconBg: 'from-rose-500 to-pink-600', color: 'text-rose-300' }
+    };
+
+    let currentSession = null;
+    let allSessions = [];
+    let isAiThinking = false;
+    let isPolishing = false;
+    let currentPersona = 'pm';
+
+    // 音声認識
+    let recognition = null;
+    let isRecording = false;
+    let rawTranscriptText = '';
+
+    // 画像添付用
+    let attachedImageData = null;
+
+    // VOICEVOX 再生オーディオインスタンス
+    let currentPlayingAudio = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadSessionsFromStorage();
+      initSpeechRecognition();
+
+      const inputEl = document.getElementById('user-input-text');
+      inputEl?.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          handleSendMessage();
+        }
+      });
+
+      inputEl?.addEventListener('paste', (e) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            readAndSetImageFile(file);
+            break;
+          }
+        }
+      });
+
+      document.addEventListener('click', () => {
+        document.getElementById('menu-persona-dropdown')?.classList.add('hidden');
+      });
+
+      if (window.lucide) lucide.createIcons();
+    });
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem('thinking_studio_theme') || 'dark';
+      document.body.className = `theme-${savedTheme} h-screen font-sans flex flex-col selection:bg-sky-500 selection:text-white overflow-hidden`;
+      updateThemeIcon(savedTheme);
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains('theme-dark');
+      const newTheme = isDark ? 'light' : 'dark';
+      document.body.className = `theme-${newTheme} h-screen font-sans flex flex-col selection:bg-sky-500 selection:text-white overflow-hidden`;
+      localStorage.setItem('thinking_studio_theme', newTheme);
+      updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+      const iconEl = document.getElementById('theme-icon');
+      if (iconEl) iconEl.textContent = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    // ==========================================
+    // セッション永続化・自動移行・復元
+    // ==========================================
+    function loadSessionsFromStorage() {
+      try {
+        let stored = localStorage.getItem(STORAGE_KEY_SESSIONS);
+
+        if (!stored) {
+          const oldStored = localStorage.getItem(STORAGE_KEY_SESSIONS_OLD);
+          if (oldStored) {
+            stored = oldStored;
+            localStorage.setItem(STORAGE_KEY_SESSIONS, oldStored);
+          }
+        }
+
+        allSessions = stored ? JSON.parse(stored) : [];
+        const activeId = localStorage.getItem(STORAGE_KEY_ACTIVE_SESSION_ID);
+        currentSession = allSessions.find(s => s.id === activeId);
+
+        if (!currentSession) {
+          if (allSessions.length > 0) {
+            currentSession = allSessions[0];
+          } else {
+            createNewSession(false);
+          }
+        }
+
+        currentPersona = currentSession.persona || 'pm';
+        renderCurrentSession();
+      } catch (e) {
+        console.error('セッション読み込みエラー:', e);
+        createNewSession(false);
+      }
+    }
+
+    function saveSessionsToStorage() {
+      try {
+        if (currentSession) currentSession.persona = currentPersona;
+        localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(allSessions));
+        if (currentSession) localStorage.setItem(STORAGE_KEY_ACTIVE_SESSION_ID, currentSession.id);
+
+        updateHeaderSessionCount();
+
+        const timeLabel = document.getElementById('board-last-saved-time');
+        if (timeLabel) {
+          const now = new Date();
+          timeLabel.textContent = `最終保存: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        }
+      } catch (e) {
+        console.error('セッション保存エラー:', e);
+      }
+    }
+
+    function updateHeaderSessionCount() {
+      const badge = document.getElementById('header-session-count-badge');
+      const modalCount = document.getElementById('modal-session-total-count');
+      const count = allSessions.length;
+      if (badge) badge.textContent = `${count}件`;
+      if (modalCount) modalCount.textContent = `${count}件`;
+    }
+
+    function createNewSession(save = true) {
+      const newId = 'ts_' + Date.now();
+      currentPersona = 'pm';
+      const newSession = {
+        id: newId,
+        title: '新規壁打ちセッション',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        phase: 1,
+        persona: 'pm',
+        board: {
+          why: '',
+          goal: { text: '', status: 'exploring' },
+          themes: [],
+          watchOut: [],
+          action: {
+            status: 'drafting',
+            summary: '',
+            quick: '',
+            steps: [],
+            cockpitTitle: '',
+            cockpitDesc: '',
+            aiStudioPrompt: ''
+          }
+        },
+        messages: [
+          {
+            role: 'model',
+            persona: 'pm',
+            content: 'こんにちは！思考構造化 ＆ 発射台ハブの専任PMです。\nこのツールの役目は、あなたのモヤモヤ（人生・業務・システム開発など何でも）を受け止めて整理し、次の一歩となる【コックピット用タスク伝票】や【現場用プロンプト】を固めることです。\nまずは中央のマイクを押して、今頭にある構想や悩みを自由にバーっとお話しください！',
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ]
+      };
+
+      allSessions.unshift(newSession);
+      currentSession = newSession;
+      if (save) saveSessionsToStorage();
+      renderCurrentSession();
+    }
+
+    // ==========================================
+    // 画面レンダリング（黒板・チャット・ペルソナ）
+    // ==========================================
+    function renderCurrentSession() {
+      if (!currentSession) return;
+      const headerTitle = document.getElementById('header-session-title');
+      if (headerTitle) headerTitle.textContent = currentSession.title || '壁打ちセッション';
+
+      updateHeaderSessionCount();
+      updatePhaseBadge(currentSession.phase || 1);
+      updatePersonaUI(currentPersona);
+      renderBoard(currentSession.board);
+      renderChatMessages(currentSession.messages);
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updatePhaseBadge(phase) {
+      const badge = document.getElementById('phase-badge');
+      const label = document.getElementById('phase-label');
+      if (!badge || !label) return;
+
+      const phaseConfigs = {
+        1: { text: '🟢 Step 1: 傾聴 ＆ 本質ゴール探求中', class: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+        2: { text: '🟡 Step 2: 論点抽出 ＆ 深掘りインタビュー中', class: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+        3: { text: '🔵 Step 3: アクション ＆ プロンプト確認中', class: 'bg-sky-500/15 text-sky-300 border-sky-500/30' },
+        4: { text: '🎉 Step 4: 完全合意済！発射台完成（コックピット引き継ぎ可能）', class: 'bg-purple-500/15 text-purple-300 border-purple-500/30' }
+      };
+
+      const conf = phaseConfigs[phase] || phaseConfigs[1];
+      label.textContent = conf.text;
+      badge.className = `flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black font-mono shadow-sm border ${conf.class}`;
+    }
+
+    function updatePersonaUI(personaKey) {
+      currentPersona = personaKey;
+      const conf = PERSONA_CONFIGS[personaKey] || PERSONA_CONFIGS.pm;
+
+      const titleEl = document.getElementById('persona-title-label');
+      const roleEl = document.getElementById('persona-role-badge');
+      const dotEl = document.getElementById('persona-speak-dot');
+
+      if (titleEl) {
+        titleEl.textContent = conf.name;
+        titleEl.className = `${conf.color} font-bold truncate max-w-[190px]`;
+      }
+      if (roleEl) roleEl.textContent = conf.roleBadge;
+      if (dotEl) {
+        dotEl.className = isAiThinking ? 'w-2 h-2 rounded-full bg-rose-500 persona-speaking-neon shrink-0' : 'w-2 h-2 rounded-full bg-sky-400 shrink-0';
+      }
+    }
+
+    function togglePersonaDropdown(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('menu-persona-dropdown')?.classList.toggle('hidden');
+    }
+
+    function manuallySwitchPersona(newPersona) {
+      updatePersonaUI(newPersona);
+      currentSession.persona = newPersona;
+      saveSessionsToStorage();
+
+      const conf = PERSONA_CONFIGS[newPersona];
+      currentSession.messages.push({
+        role: 'model',
+        persona: newPersona,
+        content: `【視点切替】ここからは「${conf.name}」の視点で問いを深掘りします。黒板の精度をさらに上げていきましょう！`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      renderChatMessages(currentSession.messages);
+      document.getElementById('menu-persona-dropdown')?.classList.add('hidden');
+    }
+
+    function renderBoard(board) {
+      if (!board) return;
+
+      // 1. Why
+      const whyEl = document.getElementById('board-why-text');
+      if (whyEl) whyEl.textContent = board.why || '（まだ会話が始まっていません。思いつくままにお話しください）';
+
+      // 🎯 Goal
+      const goalTextEl = document.getElementById('board-goal-text');
+      const goalBadgeEl = document.getElementById('board-goal-badge');
+      const goalConfirmBox = document.getElementById('goal-confirm-box');
+      const goalCard = document.getElementById('board-goal-card');
+      const goalData = board.goal || { text: '', status: 'exploring' };
+
+      if (goalTextEl) goalTextEl.textContent = goalData.text || '（対話の中で「今日の壁打ちが終わった時の着地点」を引き出し、合意を得て確定させます）';
+
+      if (goalBadgeEl) {
+        if (goalData.status === 'confirmed') {
+          goalBadgeEl.textContent = '✅ ゴール確定済';
+          goalBadgeEl.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+          if (goalCard) goalCard.className = 'p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 transition-all interactive-card shadow-sm';
+          if (goalConfirmBox) goalConfirmBox.classList.add('hidden');
+        } else if (goalData.status === 'confirming') {
+          goalBadgeEl.textContent = '❓ ユーザー承認待ち';
+          goalBadgeEl.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse';
+          if (goalCard) goalCard.className = 'p-3.5 rounded-xl border border-amber-500/50 bg-amber-500/10 transition-all interactive-card shadow-sm';
+          if (goalConfirmBox) goalConfirmBox.classList.remove('hidden');
+        } else {
+          goalBadgeEl.textContent = '⏳ 探索中';
+          goalBadgeEl.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30';
+          if (goalCard) goalCard.className = 'p-3.5 rounded-xl border border-sky-500/40 bg-sky-500/5 transition-all interactive-card shadow-sm';
+          if (goalConfirmBox) goalConfirmBox.classList.add('hidden');
+        }
+      }
+
+      // 2. What
+      const whatList = document.getElementById('board-what-list');
+      const whatCount = document.getElementById('board-what-count');
+      const themes = board.themes || [];
+      if (whatCount) whatCount.textContent = `${themes.length}件`;
+      if (whatList) {
+        if (themes.length === 0) {
+          whatList.innerHTML = '<p class="text-[11px] t-text-muted">（確定したゴールに向け、各専門視点から深掘りした論点を整理します）</p>';
+        } else {
+          whatList.innerHTML = themes.map((th, idx) => `
+            <div class="p-2.5 rounded-lg border t-card-sub space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs t-text-main flex items-center gap-1.5">
+                  <span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 font-mono text-[10px] flex items-center justify-center font-bold">${idx + 1}</span>
+                  <span>${escapeHtml(th.title)}</span>
+                </span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded font-mono bg-indigo-500/10 text-indigo-300 font-bold">${escapeHtml(th.category || '論点')}</span>
+              </div>
+              <p class="text-[11px] t-text-sub leading-relaxed pl-5.5 font-medium">${escapeHtml(th.detail || '')}</p>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 3. Watch Out
+      const watchContent = document.getElementById('board-watch-content');
+      const watchCard = document.getElementById('board-watch-card');
+      const watchItems = board.watchOut || [];
+      if (watchContent) {
+        if (watchItems.length === 0) {
+          watchContent.innerHTML = '<p class="text-[11px] text-slate-400 font-normal">（現在、重大な矛盾や破綻アラートはありません）</p>';
+          watchCard.className = 'p-3 rounded-xl border border-inherit t-card-sub transition-all opacity-80';
+        } else {
+          watchCard.className = 'p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 transition-all';
+          watchContent.innerHTML = watchItems.map(item => `
+            <div class="flex items-start gap-1.5 text-xs">
+              <span class="text-rose-400 font-bold shrink-0">⚠️</span>
+              <span class="font-bold text-rose-200 leading-snug">${escapeHtml(item)}</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 4. Action
+      const actionContent = document.getElementById('board-action-content');
+      const actionBadge = document.getElementById('board-action-badge');
+      const actionConfirmBox = document.getElementById('action-confirm-box');
+      const actionCard = document.getElementById('board-action-card');
+      const unlockBtn = document.getElementById('btn-unlock-cockpit-transfer');
+      const lockIcon = document.getElementById('icon-lock-transfer');
+      const lockLabel = document.getElementById('label-lock-transfer');
+      const actionData = board.action || {};
+
+      if (actionContent) {
+        const hasAction = actionData.summary || actionData.quick || (actionData.steps && actionData.steps.length > 0) || actionData.aiStudioPrompt;
+        if (!hasAction) {
+          actionContent.innerHTML = '<p class="text-[11px] t-text-muted">（テーマが煮詰まったら、合意事項と初手を提示し、ユーザー承認を得ます）</p>';
+        } else {
+          actionContent.innerHTML = `
+            ${actionData.cockpitTitle ? `
+              <div class="p-2 rounded-lg bg-sky-500/10 border border-sky-500/30 text-xs flex items-center justify-between">
+                <div>
+                  <span class="text-[9px] font-mono text-sky-400 font-bold block">🚀 コックピット連携タイトル（10文字目安）:</span>
+                  <span class="font-black text-white text-xs">${escapeHtml(actionData.cockpitTitle)}</span>
+                </div>
+                ${actionData.cockpitDesc ? `<span class="text-[10px] text-slate-300 max-w-[200px] truncate" title="${escapeHtml(actionData.cockpitDesc)}">${escapeHtml(actionData.cockpitDesc)}</span>` : ''}
+              </div>
+            ` : ''}
+
+            ${actionData.summary ? `
+              <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs">
+                <span class="font-black text-amber-300 block mb-0.5">📌 合意事項サマリー:</span>
+                <p class="leading-relaxed font-bold text-white">${escapeHtml(actionData.summary)}</p>
+              </div>
+            ` : ''}
+
+            ${actionData.quick ? `
+              <div class="p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-xs">
+                <span class="font-black text-emerald-300 block mb-0.5">⚡ 今日すぐできる初手（最優先5分）:</span>
+                <p class="font-bold text-slate-100">${escapeHtml(actionData.quick)}</p>
+              </div>
+            ` : ''}
+
+            ${actionData.steps && actionData.steps.length > 0 ? `
+              <div class="space-y-1 text-xs pl-1">
+                <span class="text-[10px] font-bold t-text-muted font-mono">続きの手順:</span>
+                ${actionData.steps.map(st => `
+                  <p class="text-[11px] t-text-sub font-medium leading-relaxed">・${escapeHtml(st)}</p>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            ${actionData.aiStudioPrompt ? `
+              <div class="p-2.5 rounded-lg bg-purple-500/15 border border-purple-500/30 text-xs space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-purple-300 flex items-center gap-1 text-[11px]">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400"></i>
+                    <span>Gemini / スタジオマネージャー投入用プロンプト</span>
+                  </span>
+                  <button onclick="copyAiStudioPrompt()" class="px-2 py-0.5 rounded bg-purple-600 hover:bg-purple-700 text-white font-bold text-[10px] shadow-sm flex items-center gap-1 cursor-pointer">
+                    <i data-lucide="copy" class="w-3 h-3"></i> コピー
+                  </button>
+                </div>
+                <p class="text-[10px] text-slate-300 font-mono bg-slate-950/60 p-2 rounded max-h-24 overflow-y-auto whitespace-pre-wrap select-all leading-relaxed">${escapeHtml(actionData.aiStudioPrompt)}</p>
+              </div>
+            ` : ''}
+          `;
+        }
+      }
+
+      if (actionData.status === 'confirmed') {
+        if (actionBadge) {
+          actionBadge.textContent = '🎉 発射台完成（合意済）';
+          actionBadge.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        }
+        if (actionCard) actionCard.className = 'p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-500/10 transition-all interactive-card shadow-sm';
+        if (actionConfirmBox) actionConfirmBox.classList.add('hidden');
+        if (unlockBtn) {
+          unlockBtn.disabled = false;
+          unlockBtn.className = 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-lg transition active:scale-[0.99] cursor-pointer golden-ready-btn';
+        }
+        if (lockIcon) lockIcon.setAttribute('data-lucide', 'check-circle-2');
+        if (lockLabel) lockLabel.textContent = '🚀 発射台完成！コックピットへ引き継ぎセッション終了';
+
+      } else if (actionData.status === 'confirming') {
+        if (actionBadge) {
+          actionBadge.textContent = '❓ 発射台承認待ち';
+          actionBadge.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse';
+        }
+        if (actionCard) actionCard.className = 'p-3.5 rounded-xl border border-amber-500/50 bg-amber-500/10 transition-all interactive-card shadow-sm';
+        if (actionConfirmBox) actionConfirmBox.classList.remove('hidden');
+        if (unlockBtn) {
+          unlockBtn.disabled = true;
+          unlockBtn.className = 'w-full py-2 px-3 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-not-allowed opacity-60';
+        }
+        if (lockIcon) lockIcon.setAttribute('data-lucide', 'lock');
+        if (lockLabel) lockLabel.textContent = 'アクションの合意確認でコックピット引き継ぎ解放';
+
+      } else {
+        if (actionBadge) {
+          actionBadge.textContent = '📝 策定中';
+          actionBadge.className = 'text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30';
+        }
+        if (actionCard) actionCard.className = 'p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 transition-all interactive-card shadow-sm';
+        if (actionConfirmBox) actionConfirmBox.classList.add('hidden');
+        if (unlockBtn) {
+          unlockBtn.disabled = true;
+          unlockBtn.className = 'w-full py-2 px-3 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-not-allowed opacity-60';
+        }
+        if (lockIcon) lockIcon.setAttribute('data-lucide', 'lock');
+        if (lockLabel) lockLabel.textContent = '4番のアクション合意完了でコックピット引き継ぎ解放';
+      }
+    }
+
+    function copyAiStudioPrompt() {
+      const prompt = currentSession?.board?.action?.aiStudioPrompt;
+      if (!prompt) {
+        alert('プロンプトがまだ生成されていません。');
+        return;
+      }
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert('✨ 投入用プロンプトをクリップボードにコピーしました！そのまま貼り付けて実行してください。');
+      }).catch(err => {
+        alert('コピーに失敗しました: ' + err.message);
+      });
+    }
+
+    function renderChatMessages(messages = []) {
+      const container = document.getElementById('chat-messages-container');
+      if (!container) return;
+
+      container.innerHTML = messages.map((msg, idx) => {
+        const isUser = msg.role === 'user';
+        const conf = PERSONA_CONFIGS[msg.persona] || PERSONA_CONFIGS.pm;
+        const displayContent = isUser ? msg.content : sanitizeDisplayText(msg.content);
+
+        return `
+          <div class="flex items-start gap-2.5 max-w-[94%] ${isUser ? 'ml-auto flex-row-reverse' : ''}">
+            <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 text-xs font-black shadow-sm mt-0.5 ${
+              isUser ? 'bg-indigo-600 text-white' : `bg-gradient-to-br ${conf.iconBg} text-white`
+            }">
+              ${isUser ? '私' : (msg.persona === 'pm' ? 'PM' : conf.name.substring(0, 2))}
+            </div>
+            <div class="p-3.5 rounded-2xl border text-xs leading-relaxed space-y-1.5 shadow-sm ${
+              isUser
+                ? 'rounded-tr-sm bg-sky-600 text-white border-transparent'
+                : 'rounded-tl-sm t-card-sub border border-inherit text-slate-100 font-medium'
+            }">
+              <div class="flex items-center justify-between border-b border-inherit/40 pb-1 gap-2">
+                <span class="text-[9px] font-mono ${conf.color} font-black flex items-center gap-1">
+                  ${!isUser ? `🎭 ${conf.name}` : '🗣️ あなた'}
+                </span>
+                
+                ${!isUser ? `
+                  <button onclick="playVoicevoxSpeech(${idx})" id="btn-speak-${idx}" class="p-1 rounded hover:bg-slate-700/60 text-slate-400 hover:text-emerald-400 transition cursor-pointer flex items-center gap-1 text-[9px] font-mono" title="VOICEVOXでセリフを再生">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                    <span>再生</span>
+                  </button>
+                ` : ''}
+              </div>
+
+              ${msg.image ? `
+                <div class="my-1.5 max-w-[200px] rounded-lg overflow-hidden border border-white/20">
+                  <img src="${msg.image}" alt="添付画像" class="w-full h-auto object-cover cursor-pointer" onclick="window.open('${msg.image}')">
+                </div>
+              ` : ''}
+
+              <p class="whitespace-pre-wrap select-text break-words leading-relaxed text-[13px] ${isUser ? 'text-white' : 'text-slate-100 font-medium'}">${escapeHtml(displayContent)}</p>
+              <div class="flex justify-end text-[9px] font-mono opacity-60 mt-1">
+                <span>${escapeHtml(msg.timestamp || '')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ==========================================
+    // 承認アクション
+    // ==========================================
+    function approveGoal() {
+      if (!currentSession) return;
+      currentSession.board.goal.status = 'confirmed';
+      currentSession.phase = 2;
+      saveSessionsToStorage();
+      renderCurrentSession();
+
+      handleSendMessage('【ゴール合意完了】提示されたこのゴールで合意します！このゴールを達成するために、前提や落とし穴、決めるべき問いを具体例付きで深掘りしてください。');
+    }
+
+    function approveActionAndComplete() {
+      if (!currentSession) return;
+      currentSession.board.action.status = 'confirmed';
+      currentSession.phase = 4;
+      saveSessionsToStorage();
+      renderCurrentSession();
+
+      currentSession.messages.push({
+        role: 'model',
+        persona: 'pm',
+        content: '🎉 お疲れ様でした！最高の発射台パッケージが完成しました！\n左側黒板の4番の内容を確認し、最下部の「コックピットへ引き継ぎ」ボタンを押して、本セッションは大成功でクローズ（完了）です！',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      renderChatMessages(currentSession.messages);
+    }
+
+    // ==========================================
+    // 音声認識 ＆ 画像添付 ＆ スッキリ推敲
+    // ==========================================
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        const micLabel = document.getElementById('mic-status-label');
+        if (micLabel) micLabel.textContent = 'マイク: 非対応ブラウザ';
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'ja-JP';
+      recognition.interimResults = true;
+      recognition.continuous = true;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        updateMicUI(true);
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) final += event.results[i][0].transcript;
+          else interim += event.results[i][0].transcript;
+        }
+
+        const inputEl = document.getElementById('user-input-text');
+        if (inputEl) {
+          if (final) {
+            rawTranscriptText += (rawTranscriptText ? ' ' : '') + final;
+            inputEl.value = rawTranscriptText;
+          } else if (interim) {
+            inputEl.value = rawTranscriptText + ' ' + interim;
+          }
+        }
+      };
+
+      recognition.onerror = () => { isRecording = false; updateMicUI(false); };
+      recognition.onend = () => { isRecording = false; updateMicUI(false); };
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert('このブラウザでは音声認識がサポートされていません。テキスト入力をご利用ください。');
+        return;
+      }
+      if (isRecording) {
+        recognition.stop();
+      } else {
+        rawTranscriptText = document.getElementById('user-input-text')?.value || '';
+        recognition.start();
+      }
+    }
+
+    function updateMicUI(recording) {
+      const micBtn = document.getElementById('btn-mic');
+      const micLabel = document.getElementById('mic-status-label');
+      const micDots = document.getElementById('mic-indicator-dots');
+      const statusBox = document.getElementById('mic-status-box');
+
+      if (recording) {
+        if (micBtn) micBtn.classList.add('recording-active', 'bg-rose-600', 'text-white');
+        if (micLabel) micLabel.textContent = 'マイク: 録音中... (発話中)';
+        if (micDots) micDots.classList.remove('hidden');
+        if (statusBox) statusBox.classList.add('recording-glow-frame');
+      } else {
+        if (micBtn) micBtn.classList.remove('recording-active', 'bg-rose-600', 'text-white');
+        if (micLabel) micLabel.textContent = 'マイク: 停止中';
+        if (micDots) micDots.classList.add('hidden');
+        if (statusBox) statusBox.classList.remove('recording-glow-frame');
+      }
+    }
+
+    async function polishInputWithAI() {
+      if (isPolishing) return;
+      const inputEl = document.getElementById('user-input-text');
+      const text = inputEl?.value?.trim();
+      if (!text) {
+        alert('推敲するテキストがありません。話すか入力してください。');
+        return;
+      }
+
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        alert('Gemini APIキーを設定してください。');
+        openSettingsModal();
+        return;
+      }
+
+      setPolishingState(true);
+
+      const rawTextEl = document.getElementById('raw-voice-text');
+      const accordion = document.getElementById('raw-voice-accordion');
+      if (rawTextEl) rawTextEl.textContent = text;
+      if (accordion) accordion.classList.remove('hidden');
+
+      const prompt = `あなたはプロの文字起こし編集・文章校正のスペシャリストです。
+音声入力特有の「句読点のないベタ書きテキスト」や「言い淀み」を、
+話し手の具体的なアイデア、熱量、数字、固有名詞などの情報量を100%完全に保ったまま、
+極めて読みやすく美しい日本語の文章に整形（リライト）してください。
+
+【厳格ルール】
+1. 適切な句読点と段落改行（構造化）：句点を適切に打ち、話題の切れ目で空行を入れること。
+2. 1文の日本語チェック：主語述語のねじれを補正し、フィラー（えーと、あの等）は完全排除すること。
+3. 要約は厳禁：箇条書きにして短くまとめたり、具体例を削って要約してはいけません。
+4. 出力形式：前置きや挨拶は一切含めず、整形後の文章のみを出力してください。
+
+【元の発話テキスト】
+${text}`;
+
+      try {
+        const polished = await callGeminiApi(prompt, apiKey, null);
+        inputEl.value = sanitizeDisplayText(polished.trim());
+        rawTranscriptText = inputEl.value;
+      } catch (e) {
+        alert('推敲に失敗しました: ' + e.message);
+      } finally {
+        setPolishingState(false);
+      }
+    }
+
+    function setPolishingState(polishing) {
+      isPolishing = polishing;
+      const btn = document.getElementById('btn-polish-input');
+      const icon = document.getElementById('polish-icon');
+      const label = document.getElementById('polish-btn-label');
+
+      if (!btn) return;
+      if (polishing) {
+        btn.disabled = true;
+        if (icon) icon.className = 'w-3 h-3 text-purple-400 animate-spin';
+        if (label) label.textContent = '推敲中...';
+      } else {
+        btn.disabled = false;
+        if (icon) icon.className = 'w-3 h-3 text-purple-400';
+        if (label) label.textContent = '✨ スッキリ推敲';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handleImageFileSelect(event) {
+      const file = event.target.files?.[0];
+      if (file) readAndSetImageFile(file);
+      event.target.value = '';
+    }
+
+    function readAndSetImageFile(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('画像ファイルを選択してください。');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        attachedImageData = {
+          base64: e.target.result.split(',')[1],
+          mimeType: file.type,
+          name: file.name || 'clipboard_image.png',
+          dataUrl: e.target.result
+        };
+        showImagePreview(attachedImageData);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function showImagePreview(imgData) {
+      const container = document.getElementById('image-preview-container');
+      const thumb = document.getElementById('image-preview-thumb');
+      const name = document.getElementById('image-preview-name');
+      if (container && thumb && name) {
+        thumb.src = imgData.dataUrl;
+        name.textContent = imgData.name;
+        container.classList.remove('hidden');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function removeAttachedImage() {
+      attachedImageData = null;
+      document.getElementById('image-preview-container')?.classList.add('hidden');
+    }
+
+    function toggleRawVoiceView() {
+      const body = document.getElementById('raw-voice-body');
+      const icon = document.getElementById('raw-voice-icon');
+      if (body) {
+        const isHidden = body.classList.contains('hidden');
+        if (isHidden) {
+          body.classList.remove('hidden');
+          if (icon) icon.classList.add('rotate-180');
+        } else {
+          body.classList.add('hidden');
+          if (icon) icon.classList.remove('rotate-180');
+        }
+      }
+    }
+
+    function restoreRawText() {
+      const raw = document.getElementById('raw-voice-text')?.textContent;
+      const inputEl = document.getElementById('user-input-text');
+      if (raw && inputEl) {
+        inputEl.value = raw;
+        rawTranscriptText = raw;
+      }
+    }
+
+    function clearInputText() {
+      const inputEl = document.getElementById('user-input-text');
+      if (inputEl) inputEl.value = '';
+      rawTranscriptText = '';
+      removeAttachedImage();
+      document.getElementById('raw-voice-accordion')?.classList.add('hidden');
+    }
+
+    // ==========================================
+    // 専任参謀コアエンジン（★新・アーキテクチャ対応プロンプト）
+    // ==========================================
+    async function handleSendMessage(overrideText = null) {
+      if (isAiThinking) return;
+
+      const inputEl = document.getElementById('user-input-text');
+      const text = overrideText || inputEl?.value?.trim();
+      const currentImage = attachedImageData;
+
+      if (!text && !currentImage) return;
+
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        alert('Gemini APIキーを設定してください。');
+        openSettingsModal();
+        return;
+      }
+
+      const userMsg = {
+        role: 'user',
+        content: text || '（画像を送信しました）',
+        image: currentImage ? currentImage.dataUrl : null,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      currentSession.messages.push(userMsg);
+      renderChatMessages(currentSession.messages);
+
+      if (!overrideText && inputEl) {
+        inputEl.value = '';
+        rawTranscriptText = '';
+        removeAttachedImage();
+        document.getElementById('raw-voice-accordion')?.classList.add('hidden');
+      }
+
+      setAiThinkingState(true);
+
+      const prompt = buildStepwiseFacilitatorPrompt(userMsg.content);
+
+      try {
+        const rawJsonStr = await callGeminiApi(prompt, apiKey, currentImage);
+        const parsed = cleanAndParseJson(rawJsonStr);
+
+        if (parsed.persona && parsed.persona !== currentPersona) {
+          currentPersona = parsed.persona;
+        }
+
+        if (parsed.reply) {
+          currentSession.messages.push({
+            role: 'model',
+            persona: currentPersona,
+            content: parsed.reply,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+        }
+
+        if (parsed.sessionTitle && currentSession.title === '新規壁打ちセッション') {
+          currentSession.title = parsed.sessionTitle;
+        }
+
+        if (parsed.phase) {
+          currentSession.phase = Number(parsed.phase);
+        }
+
+        if (parsed.board) {
+          const b = parsed.board;
+          currentSession.board = {
+            why: b.why || currentSession.board.why,
+            goal: b.goal ? {
+              text: b.goal.text || currentSession.board.goal.text,
+              status: b.goal.status || currentSession.board.goal.status
+            } : currentSession.board.goal,
+            themes: b.themes || currentSession.board.themes,
+            watchOut: b.watchOut || currentSession.board.watchOut,
+            action: b.action ? {
+              status: b.action.status || currentSession.board.action.status,
+              summary: b.action.summary || currentSession.board.action.summary,
+              quick: b.action.quick || currentSession.board.action.quick,
+              steps: b.action.steps || currentSession.board.action.steps,
+              cockpitTitle: b.action.cockpitTitle || currentSession.board.action.cockpitTitle || '',
+              cockpitDesc: b.action.cockpitDesc || currentSession.board.action.cockpitDesc || '',
+              aiStudioPrompt: b.action.aiStudioPrompt || currentSession.board.action.aiStudioPrompt || ''
+            } : currentSession.board.action
+          };
+          triggerBoardUpdateFlash();
+        }
+
+        currentSession.updatedAt = new Date().toISOString();
+        saveSessionsToStorage();
+        renderCurrentSession();
+
+      } catch (e) {
+        console.error('参謀応答エラー:', e);
+        currentSession.messages.push({
+          role: 'model',
+          persona: currentPersona,
+          content: `申し訳ありません。思考の構造化中にエラーが発生しました: ${e.message}`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        renderChatMessages(currentSession.messages);
+      } finally {
+        setAiThinkingState(false);
+      }
+    }
+
+    function buildStepwiseFacilitatorPrompt(userMessage) {
+      const recentChat = currentSession.messages.slice(-8).map(m => `${m.role === 'user' ? 'ユーザー' : '参謀'}: ${m.content}`).join('\n');
+      const currentBoardJson = JSON.stringify(currentSession.board, null, 2);
+
+      return `あなたは思考の壁打ちとアクション発射台を担う「Thinking Studio」の専任システムアドバイザー 兼 総合PMファシリテーターです。
+現在の担当視点: ${PERSONA_CONFIGS[currentPersona]?.name} (${currentPersona})
+
+【開発エコシステムの完全体系（新4層＋1基盤）の前提知識】
+あなたとユーザーは以下の4階層エコシステムで動いています。この全体地図を完全に把握した上でファシリテートしてください。
+1. ① Thinking Studio（★ここ）：思考構造化 ＆ 発射台ハブ。人生・日常業務・システム開発すべてのモヤモヤを受け止め、次の一歩に仕立て上げる。
+2. ② Wish & Action コックピット：全体司令塔 ＆ 統合スケジュール伝票盤。全タスクの納期と人間のキャパシティ（負荷総量）を一元管理。
+3. ★ スタジオマネージャー（自作ツール③）：開発管制塔 ＆ DevOps現場コックピット。
+   - 4つのAI Studio ID・トークン残量の監視・配車
+   - チャット予約（文脈・ノウハウ保持）
+   - 上流でのバージョン採番（v1.2.0等）と開発計画
+   - 【内包機能】旧システム台帳（成果物カタログ・復旧マップ）
+4. ③ Google AI Studio（4 IDs）：コード生成工場。スタジオマネージャーの指示下で実装。
+5. 🔒 GitHub / GitHub Pages：物理金庫（完全履歴保管） ＆ Web即座配信。
+
+【ファシリテーション規範（メタ視点・鳥の目の厳守）】
+・【全体体系・アーキテクチャの相談を見逃さない】：
+  ユーザーが「システム全体の整理」「ツールの役割分担」「位置づけの悩み」を話している時は、絶対に勝手に「ミクロな仕様書作成」や「二者択一（AかBか）」へ話をすり替えてはいけません。
+  ユーザーの視座（鳥の目）に立ち、全体連携マップ上のどこに位置づくかを論理的に解き明かしてください。
+・【二者択一誘導の禁止】：
+  安易に「Aですか？Bですか？」と迫ってユーザーの思考を狭めず、ユーザーの違和感や本質的な動機を深掘りするオープンな問いかけを心がけてください。
+・【相談タイプのトリアージ】：
+  - 非システム相談（手作業・対人・業務）：コックピット用のタスク伝票とサマリーで気持ちよくクローズする（AI Studioプロンプトは空でOK）。
+  - システム開発相談：コックピット用の大枠伝票に加え、スタジオマネージャーへ投入する「開発仕様・プロンプト」を生成する。
+
+【現在のセッション情報】
+セッション名: ${currentSession.title}
+現在のStep: Step ${currentSession.phase}
+現在の黒板 (JSON):
+${currentBoardJson}
+
+【直近の対話ログ】
+${recentChat}
+
+【最新のユーザー発話】
+${userMessage}
+
+【思考・対話の進め方ルール】
+■ 1. 傾聴・ゴール探求フェーズ（Step 1: ゴール未確定時）
+・ユーザーの発話の背景（Why）を捉え、言葉の裏にある「本質的な課題」を言語化します。
+・対話の中でユーザーの意図が深化した場合、「話していくうちに当初のゴールから【〇〇】へと目的が進化しましたね！ゴールをこちらに更新しましょう」とゴールポストを更新提案（status: "confirming"）してください。
+
+■ 2. 構造化インタビューフェーズ（Step 2: ゴール確定後 〜 論点整理）
+・AIが一人で長々と解説することは厳禁です。
+・抽出した要素を board.themes に整理し、潜在リスクや落とし穴を board.watchOut に追記します。
+・鳥の目（全体構造）と虫の目（現場実装）を意識し、的確な問いを1つ投げかけてください。
+
+■ 3. 発射台クロージングフェーズ（Step 3: アクション策定・合意確認）
+・論点が出揃ったら、黒板の board.action をまとめます（status: "confirming"）。
+・【コックピット専用タイトルの厳格命名ルール】:
+  - cockpitTitle: 【10文字程度（最大12文字以内）】。具体的で何をするアクションなのか一目でピンとくる動詞または成果物名にすること。
+  - cockpitDesc: 【50文字以内】。何をするタスクなのかを端的に記述すること。
+・【aiStudioPrompt の生成】:
+  - システム開発案件の場合：スタジオマネージャーやAI Studioに投入できる完全な仕様書型プロンプトを出力。非システムの場合は空文字列。
+
+【返答テキスト（reply）の表記ルール】
+・アスタリスク（**）やシャープ（###）などのマークダウン記号は一切含めず、自然で美しい日本語の文章として出力してください。
+
+【出力形式】
+必ず以下の純粋なJSONオブジェクトのみを出力してください（Markdownコードブロックは不要）。
+
+{
+  "sessionTitle": "話の内容を象徴するタイトル（15文字以内）",
+  "phase": 1〜4の数値,
+  "persona": "pm" | "prompt" | "architect" | "designer" | "consultant",
+  "reply": "チャットストリームに表示する返答",
+  "board": {
+    "why": "発想原点・根本動機",
+    "goal": {
+      "text": "明確化されたゴール",
+      "status": "exploring" | "confirming" | "confirmed"
+    },
+    "themes": [
+      { "title": "論点テーマ名", "category": "要件/技術/体験/運用など", "detail": "具体論点の要約" }
+    ],
+    "watchOut": [
+      "心理的離脱リスクや運用の形骸化懸念など"
+    ],
+    "action": {
+      "status": "drafting" | "confirming" | "confirmed",
+      "cockpitTitle": "コックピット用タイトル（10文字程度・具体的行動）",
+      "cockpitDesc": "コックピット用説明（50文字以内）",
+      "summary": "合意事項サマリー",
+      "quick": "今日すぐ5分でできる最初の一手",
+      "steps": ["第2手: 〜〜", "第3手: 〜〜"],
+      "aiStudioPrompt": "スタジオマネージャー/AI Studio投入用プロンプト（非システム時は空文字列）"
+    }
+  }
+}`;
+    }
+
+    function triggerRescueAction(type) {
+      if (type === 'lost') {
+        handleSendMessage('【手綱要請】ちょっと自分が何を目的になにを喋っているか迷子になってきました。ここまでの話を一旦整理して、現在の論点と、いま決めるべき問いを教えてください。');
+      } else if (type === 'summarize') {
+        handleSendMessage('【手綱要請】ここまでの話をもとに、最終的な結論と今後のアクションを綺麗にまとめて要約レポートを作ってください。');
+      } else if (type === 'challenge') {
+        handleSendMessage('【手綱要請】あえて厳しい視点でツッコミを入れてください。この構想の死角、見落としているリスク、論理破綻しているところはどこですか？');
+      }
+    }
+
+    function setAiThinkingState(thinking) {
+      isAiThinking = thinking;
+      const indicator = document.getElementById('ai-thinking-indicator');
+      const sendBtn = document.getElementById('btn-send-message');
+      const boardInd = document.getElementById('board-update-indicator');
+      const dotEl = document.getElementById('persona-speak-dot');
+
+      if (thinking) {
+        if (indicator) indicator.classList.remove('hidden');
+        if (boardInd) boardInd.classList.remove('hidden');
+        if (sendBtn) sendBtn.disabled = true;
+        if (dotEl) dotEl.className = 'w-2 h-2 rounded-full bg-rose-500 persona-speaking-neon shrink-0';
+      } else {
+        if (indicator) indicator.classList.add('hidden');
+        if (boardInd) boardInd.classList.add('hidden');
+        if (sendBtn) sendBtn.disabled = false;
+        if (dotEl) dotEl.className = 'w-2 h-2 rounded-full bg-sky-400 shrink-0';
+      }
+    }
+
+    function triggerBoardUpdateFlash() {
+      ['board-why-card', 'board-goal-card', 'board-what-card', 'board-watch-card', 'board-action-card'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('board-updated');
+          void el.offsetWidth;
+          el.classList.add('board-updated');
+        }
+      });
+    }
+
+    function sanitizeDisplayText(raw) {
+      if (!raw) return '';
+      let text = raw;
+      text = text.replace(/```[\s\S]*?```/g, '');
+      text = text.replace(/`([^`]+)`/g, '$1');
+      text = text.replace(/^#{1,6}\s+/gm, '');
+      text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
+      text = text.replace(/\*([^*]+)\*/g, '$1');
+      text = text.replace(/^[-*+]\s+/gm, '・');
+      return text;
+    }
+
+    function cleanTextForSpeech(raw) {
+      let text = sanitizeDisplayText(raw);
+      text = text.replace(/https?:\/\/\S+/g, '');
+      text = text.replace(/^\d+\.\s+/gm, '');
+      text = text.replace(/[🛑✨💡🎯🧭⚡📋🚀🎉🎭⚠️]/g, '');
+      return text.trim();
+    }
+
+    async function playVoicevoxSpeech(messageIndex) {
+      const msg = currentSession?.messages?.[messageIndex];
+      if (!msg || !msg.content) return;
+
+      const serverUrl = localStorage.getItem(STORAGE_VOICEVOX_URL) || 'http://127.0.0.1:50021';
+      const speakerId = localStorage.getItem(STORAGE_VOICEVOX_SPEAKER) || '11';
+
+      const speechText = cleanTextForSpeech(msg.content);
+      if (!speechText) {
+        alert('読み上げるテキストがありません。');
+        return;
+      }
+
+      const btn = document.getElementById(`btn-speak-${messageIndex}`);
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>生成中...</span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      try {
+        const queryUrl = `${serverUrl}/audio_query?text=${encodeURIComponent(speechText)}&speaker=${speakerId}`;
+        const queryRes = await fetch(queryUrl, { method: 'POST' });
+        if (!queryRes.ok) throw new Error('VOICEVOXに接続できません。PCでVOICEVOXが起動しているか確認してください。');
+        const queryData = await queryRes.json();
+
+        const synthUrl = `${serverUrl}/synthesis?speaker=${speakerId}`;
+        const synthRes = await fetch(synthUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(queryData)
+        });
+        if (!synthRes.ok) throw new Error('音声合成に失敗しました。');
+
+        const audioBlob = await synthRes.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        if (currentPlayingAudio) {
+          currentPlayingAudio.pause();
+        }
+
+        const audio = new Audio(audioUrl);
+        currentPlayingAudio = audio;
+
+        if (btn) {
+          btn.innerHTML = `<i data-lucide="square" class="w-3.5 h-3.5 text-rose-400"></i><span class="text-rose-400">停止</span>`;
+          btn.onclick = () => {
+            audio.pause();
+            btn.innerHTML = `<i data-lucide="volume-2" class="w-3.5 h-3.5"></i><span>再生</span>`;
+            btn.onclick = () => playVoicevoxSpeech(messageIndex);
+            if (window.lucide) lucide.createIcons();
+          };
+          if (window.lucide) lucide.createIcons();
+        }
+
+        audio.onended = () => {
+          if (btn) {
+            btn.innerHTML = `<i data-lucide="volume-2" class="w-3.5 h-3.5"></i><span>再生</span>`;
+            btn.onclick = () => playVoicevoxSpeech(messageIndex);
+            if (window.lucide) lucide.createIcons();
+          }
+        };
+
+        audio.play();
+
+      } catch (err) {
+        alert('VOICEVOX再生エラー: ' + err.message);
+        if (btn) {
+          btn.innerHTML = `<i data-lucide="volume-2" class="w-3.5 h-3.5"></i><span>再生</span>`;
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    }
+
+    // ==========================================
+    // ログコピー ＆ コックピット連携
+    // ==========================================
+    function copyFullConversationLog() {
+      if (!currentSession) return;
+      const b = currentSession.board;
+      const msgs = currentSession.messages || [];
+
+      let log = `============================================================\n`;
+      log += `【Thinking Studio 対話ログ分析レポート】\n`;
+      log += `セッション名: ${currentSession.title}\n`;
+      log += `記録日時: ${new Date().toLocaleString()}\n`;
+      log += `進捗Step: Step ${currentSession.phase}\n`;
+      log += `現在の担当視点: ${PERSONA_CONFIGS[currentPersona]?.name || '総合PM'}\n`;
+      log += `ゴール状況: [${b.goal.status === 'confirmed' ? '✅確定' : '検討中'}] ${b.goal.text || '未定'}\n`;
+      log += `アクション状況: [${b.action.status === 'confirmed' ? '✅完全合意済' : '策定中'}]\n`;
+      log += `============================================================\n\n`;
+
+      log += `【--- 全対話ログ (時系列 ${msgs.length}件) ---】\n\n`;
+
+      msgs.forEach((m, idx) => {
+        const isUser = m.role === 'user';
+        const speaker = isUser ? '🗣️ ユーザー' : `🤖 参謀AI [${PERSONA_CONFIGS[m.persona]?.name || '総合PM'}]`;
+        log += `[${idx + 1}] ${speaker} (${m.timestamp || '--:--'}):\n`;
+        log += `${m.content}\n\n`;
+      });
+
+      log += `============================================================\n`;
+      log += `【現在の黒板スナップショット】\n`;
+      log += `・1. 背景(Why): ${b.why || '未設定'}\n`;
+      log += `・🎯 ゴール(Goal): ${b.goal.text || '未定'} (状態: ${b.goal.status})\n`;
+      log += `・2. 論点(What):\n`;
+      (b.themes || []).forEach((th, i) => {
+        log += `   ${i + 1}. 【${th.title}】(${th.category || '一般'}) - ${th.detail}\n`;
+      });
+      log += `・3. 矛盾アラート(Watch Out):\n`;
+      (b.watchOut || []).forEach(w => log += `   - ⚠️ ${w}\n`);
+      log += `・4. アクション(Action):\n`;
+      log += `   - コックピット用タイトル: ${b.action.cockpitTitle || '未定'}\n`;
+      log += `   - コックピット用説明: ${b.action.cockpitDesc || '未定'}\n`;
+      log += `   - サマリー: ${b.action.summary || '未定'}\n`;
+      log += `   - 初手(5分): ${b.action.quick || '未定'}\n`;
+      (b.action.steps || []).forEach(st => log += `   - ${st}\n`);
+      if (b.action.aiStudioPrompt) {
+        log += `\n【スタジオマネージャー / AI Studio用プロンプト】:\n${b.action.aiStudioPrompt}\n`;
+      }
+      log += `============================================================\n`;
+
+      navigator.clipboard.writeText(log).then(() => {
+        alert('📋 全対話ログをコピーしました！このチャットに貼り付けて送信してください。');
+      }).catch(err => {
+        alert('コピーに失敗しました: ' + err.message);
+      });
+    }
+
+    function copyBoardAsMarkdown() {
+      if (!currentSession) return;
+      const b = currentSession.board;
+
+      let md = `# 【壁打ち黒板】${currentSession.title}\n\n`;
+      md += `**作成日時:** ${new Date(currentSession.createdAt).toLocaleString()}\n`;
+      md += `**ステータス:** Step ${currentSession.phase} (${b.action.status === 'confirmed' ? '発射台完成' : '検討中'})\n\n`;
+
+      md += `## 1. 発想のきっかけ・背景 (Why)\n${b.why || '未設定'}\n\n`;
+      md += `## 🎯 定義されたゴール (Goal)\n**[${b.goal.status === 'confirmed' ? '確定' : '検討中'}]** ${b.goal.text || '未定'}\n\n`;
+
+      md += `## 2. 検討テーマ ＆ 抽出された論点 (What)\n`;
+      (b.themes || []).forEach((th, i) => {
+        md += `${i + 1}. **${th.title}** (${th.category || '一般'})\n   - ${th.detail}\n`;
+      });
+      md += '\n';
+
+      if (b.watchOut && b.watchOut.length > 0) {
+        md += `## 3. 矛盾・手綱チェックアラート (Watch Out)\n`;
+        b.watchOut.forEach(w => md += `- ⚠️ ${w}\n`);
+        md += '\n';
+      }
+
+      md += `## 4. 合意要約 ＆ 発射台パッケージ (Action)\n`;
+      if (b.action.cockpitTitle) md += `**【タスク名（10文字目安）】** ${b.action.cockpitTitle}\n\n`;
+      if (b.action.summary) md += `**【合意事項サマリー】**\n${b.action.summary}\n\n`;
+      if (b.action.quick) md += `**【今日すぐできる初手（5分）】**\n${b.action.quick}\n\n`;
+      if (b.action.steps && b.action.steps.length > 0) {
+        md += `**【続きの手順】**\n`;
+        b.action.steps.forEach(st => md += `- ${st}\n`);
+        md += '\n';
+      }
+      if (b.action.aiStudioPrompt) {
+        md += `## 🚀 スタジオマネージャー / AI Studio 投入用プロンプト\n\`\`\`markdown\n${b.action.aiStudioPrompt}\n\`\`\`\n\n`;
+      }
+
+      navigator.clipboard.writeText(md).then(() => {
+        alert('黒板の内容をMarkdown形式でクリップボードにコピーしました！');
+      }).catch(err => {
+        alert('コピーに失敗しました: ' + err.message);
+      });
+    }
+
+    function exportToCockpitJson() {
+      if (!currentSession) return;
+      const b = currentSession.board;
+
+      const newSessionId = 'sess_' + Date.now();
+      const newThemeId = 'th_' + Date.now();
+      const newTaskId = 't_' + Date.now();
+
+      let taskTitle = b.action.cockpitTitle?.trim();
+      if (!taskTitle) {
+        taskTitle = b.action.quick ? b.action.quick.substring(0, 12) : currentSession.title.substring(0, 12);
+      }
+      if (taskTitle.length > 14) taskTitle = taskTitle.substring(0, 12);
+
+      let taskDesc = b.action.cockpitDesc?.trim();
+      if (!taskDesc) {
+        taskDesc = b.action.summary ? b.action.summary.substring(0, 48) : (b.goal.text || currentSession.title).substring(0, 48);
+      }
+      if (taskDesc.length > 50) taskDesc = taskDesc.substring(0, 48);
+
+      const primaryThemeTitle = currentSession.title.substring(0, 16);
+      const primaryCategory = b.themes?.[0]?.category || '計画';
+
+      const cockpitSession = {
+        id: newSessionId,
+        timestamp: new Date().toLocaleDateString([], { month: 'numeric', day: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        context: (b.why ? `【背景】${b.why}\n` : '') + (b.goal.text ? `【ゴール】${b.goal.text}` : `${currentSession.title}の壁打ちから発想スタート。`),
+        themes: [
+          {
+            id: newThemeId,
+            theme: primaryThemeTitle,
+            category: primaryCategory,
+            content: b.action.summary || b.goal.text || currentSession.title,
+            advices: {
+              quick: b.action.quick || '初手アクションを実行する（5分）。',
+              steps: b.action.steps || ['第2手: 準備物を整える', '第3手: 実行スケジュールを確定する'],
+              pitfall: b.watchOut?.[0] || '三日坊主や形骸化に注意。',
+              comments: b.action.aiStudioPrompt ? [`【投入用プロンプト生成済】黒板からコピー可能`] : []
+            }
+          }
+        ]
+      };
+
+      const cockpitTask = {
+        id: newTaskId,
+        sessionId: newSessionId,
+        themeId: newThemeId,
+        category: primaryCategory,
+        title: taskTitle,
+        description: taskDesc,
+        dueDate: '',
+        priority: '高',
+        progressPercent: 0,
+        progressNote: b.action.quick ? `[ ] 【初手】${b.action.quick}\n` + (b.action.steps || []).map(s => `[ ] ${s}`).join('\n') : '',
+        completed: false,
+        needsAttention: true,
+        createdAt: Date.now()
+      };
+
+      const exportPayload = {
+        exportTimestamp: new Date().toISOString(),
+        version: 'V.2.1.0',
+        source: 'Thinking Studio',
+        sessions: [cockpitSession],
+        tasks: [cockpitTask]
+      };
+
+      try {
+        localStorage.setItem(COCKPIT_INBOX_KEY, JSON.stringify(exportPayload));
+      } catch (e) {
+        console.warn('LocalStorage書き込みスキップ:', e);
+      }
+
+      const jsonStr = JSON.stringify(exportPayload, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cockpit_transfer_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      alert(`🎉 発射台からコックピットへの引き継ぎパッケージを出力しました！\n\n・タスク名: 『${taskTitle}』(10文字前後)\n・説明: 『${taskDesc}』(50文字以内)\n\n※Thinking Studio内のセッションは保持されています。\nコックピット右上の「📂 取込」から取り込み、次の行動やスタジオマネージャーへ進みましょう！`);
+    }
+
+    function resetBoardData() {
+      if (confirm('現在の黒板の内容をリセットしますか？（チャットログは保持されます）')) {
+        currentSession.board = {
+          why: '',
+          goal: { text: '', status: 'exploring' },
+          themes: [],
+          watchOut: [],
+          action: { status: 'drafting', summary: '', quick: '', steps: [], cockpitTitle: '', cockpitDesc: '', aiStudioPrompt: '' }
+        };
+        saveSessionsToStorage();
+        renderBoard(currentSession.board);
+      }
+    }
+
+    function clearChatHistory() {
+      if (confirm('チャットログをクリアしますか？')) {
+        currentSession.messages = [
+          {
+            role: 'model',
+            persona: 'pm',
+            content: 'チャットをクリアしました。新しい論点や構想について自由にお話しください。',
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ];
+        saveSessionsToStorage();
+        renderChatMessages(currentSession.messages);
+      }
+    }
+
+    // ガイドモーダル制御
+    function openGuideModal() { document.getElementById('guide-modal')?.classList.remove('hidden'); }
+    function closeGuideModal() { document.getElementById('guide-modal')?.classList.add('hidden'); }
+    function switchGuideTab(tabNum) {
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`guide-tab-btn-${i}`);
+        const tab = document.getElementById(`guide-tab-${i}`);
+        if (i === tabNum) {
+          if (btn) btn.className = 'px-3.5 py-1.5 rounded-lg bg-sky-600 text-white shadow-sm flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer';
+          if (tab) tab.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = 'px-3.5 py-1.5 rounded-lg t-card-sub border t-text-muted hover:t-text-main flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer';
+          if (tab) tab.classList.add('hidden');
+        }
+      }
+    }
+
+    // ==========================================
+    // 過去セッション管理 ＆ バックアップ復元
+    // ==========================================
+    function openSessionsModal() {
+      renderSessionsList(allSessions);
+      updateHeaderSessionCount();
+      document.getElementById('sessions-modal')?.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeSessionsModal() {
+      document.getElementById('sessions-modal')?.classList.add('hidden');
+    }
+
+    function renderSessionsList(sessions) {
+      const container = document.getElementById('sessions-list-container');
+      if (!container) return;
+      if (sessions.length === 0) {
+        container.innerHTML = '<p class="text-center py-6 t-text-muted">セッション履歴がありません</p>';
+        return;
+      }
+      container.innerHTML = sessions.map(sess => {
+        const isActive = currentSession && currentSession.id === sess.id;
+        const goalText = sess.board?.goal?.text || 'ゴール未確定';
+        return `
+          <div class="p-3 rounded-xl border transition flex items-center justify-between gap-3 cursor-pointer ${
+            isActive ? 'border-sky-500 bg-sky-500/10 shadow-sm' : 't-card-sub hover:border-sky-500/50'
+          }" onclick="selectSession('${sess.id}')">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-0.5">
+                <h4 class="font-bold text-xs t-text-main truncate max-w-[280px]">${escapeHtml(sess.title)}</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 font-bold shrink-0">Step ${sess.phase || 1}</span>
+                ${isActive ? '<span class="text-[9px] font-bold text-emerald-400">● 選択中</span>' : ''}
+              </div>
+              <p class="text-[10px] text-slate-400 truncate">🎯 ${escapeHtml(goalText)}</p>
+              <p class="text-[9px] font-mono t-text-muted mt-0.5">更新: ${new Date(sess.updatedAt).toLocaleString()}</p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+              <button onclick="deleteSession('${sess.id}')" class="p-1.5 rounded-lg hover:bg-rose-500/15 text-slate-400 hover:text-rose-400 transition cursor-pointer" title="このセッションを安全に削除">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectSession(sessionId) {
+      const target = allSessions.find(s => s.id === sessionId);
+      if (target) {
+        currentSession = target;
+        currentPersona = currentSession.persona || 'pm';
+        saveSessionsToStorage();
+        renderCurrentSession();
+        closeSessionsModal();
+      }
+    }
+
+    function deleteSession(sessionId) {
+      const target = allSessions.find(s => s.id === sessionId);
+      const title = target ? target.title : 'このセッション';
+
+      if (confirm(`【確認】本当に『${title}』を削除してもよろしいですか？\n※この操作は取り消せません。`)) {
+        allSessions = allSessions.filter(s => s.id !== sessionId);
+        if (currentSession && currentSession.id === sessionId) {
+          currentSession = allSessions[0] || null;
+          if (!currentSession) createNewSession(false);
+        }
+        saveSessionsToStorage();
+        renderSessionsList(allSessions);
+        renderCurrentSession();
+      }
+    }
+
+    function filterSessionsList() {
+      const q = document.getElementById('session-search-input')?.value.toLowerCase() || '';
+      const filtered = allSessions.filter(s => 
+        (s.title && s.title.toLowerCase().includes(q)) ||
+        (s.board?.why && s.board.why.toLowerCase().includes(q)) ||
+        (s.board?.goal?.text && s.board.goal.text.toLowerCase().includes(q))
+      );
+      renderSessionsList(filtered);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function createNewSessionFromModal() {
+      createNewSession(true);
+      closeSessionsModal();
+    }
+
+    // 全セッションの一括バックアップ保存（JSON書き出し）
+    function exportAllSessionsBackup() {
+      if (allSessions.length === 0) {
+        alert('保存するセッションがありません。');
+        return;
+      }
+
+      const backupData = {
+        app: 'Thinking Studio',
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        sessionsCount: allSessions.length,
+        activeSessionId: currentSession?.id || null,
+        sessions: allSessions
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `thinking_studio_backup_${allSessions.length}件_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      alert(`✅ 全 ${allSessions.length} 件の思考セッションをバックアップファイルとして保存しました！`);
+    }
+
+    // バックアップファイルからの復元
+    function importSessionsBackup(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const importedSessions = parsed.sessions || (Array.isArray(parsed) ? parsed : null);
+
+          if (!importedSessions || !Array.isArray(importedSessions) || importedSessions.length === 0) {
+            throw new Error('有効なThinking Studioセッションデータが見つかりませんでした。');
+          }
+
+          if (confirm(`バックアップファイルから ${importedSessions.length} 件のセッションを復元しますか？\n（現在のセッション一覧がこのファイルの内容で復元されます）`)) {
+            allSessions = importedSessions;
+            currentSession = allSessions[0] || null;
+            if (!currentSession) createNewSession(false);
+            currentPersona = currentSession.persona || 'pm';
+
+            saveSessionsToStorage();
+            renderSessionsList(allSessions);
+            renderCurrentSession();
+            alert(`🎉 ${importedSessions.length} 件のセッションを復元しました！`);
+          }
+        } catch (err) {
+          alert('復元エラー: ' + err.message);
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // 設定モーダル制御
+    function openSettingsModal() {
+      const keyInput = document.getElementById('api-key-input');
+      const voxUrl = document.getElementById('voicevox-url-input');
+      const voxSpeaker = document.getElementById('voicevox-speaker-select');
+
+      if (keyInput) keyInput.value = getApiKey();
+      if (voxUrl) voxUrl.value = localStorage.getItem(STORAGE_VOICEVOX_URL) || 'http://127.0.0.1:50021';
+      if (voxSpeaker) voxSpeaker.value = localStorage.getItem(STORAGE_VOICEVOX_SPEAKER) || '11';
+
+      document.getElementById('settings-modal')?.classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal')?.classList.add('hidden');
+    }
+
+    function saveSettings() {
+      const key = document.getElementById('api-key-input')?.value.trim();
+      const voxUrl = document.getElementById('voicevox-url-input')?.value.trim() || 'http://127.0.0.1:50021';
+      const voxSpeaker = document.getElementById('voicevox-speaker-select')?.value || '11';
+
+      localStorage.setItem(COCKPIT_STORAGE_KEY_API_KEY, key);
+      localStorage.setItem(STORAGE_VOICEVOX_URL, voxUrl);
+      localStorage.setItem(STORAGE_VOICEVOX_SPEAKER, voxSpeaker);
+
+      closeSettingsModal();
+      alert('設定を保存しました。');
+    }
+
+    function getApiKey() {
+      return localStorage.getItem(COCKPIT_STORAGE_KEY_API_KEY) || '';
+    }
+
+    // Gemini API 通信（gemini-3.5-flash-lite 固定）
+    async function callGeminiApi(prompt, apiKey, imageObj = null) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${FIXED_MODEL_NAME}:generateContent?key=${apiKey}`;
+
+      const parts = [{ text: prompt }];
+
+      if (imageObj && imageObj.base64) {
+        parts.push({
+          inlineData: {
+            mimeType: imageObj.mimeType,
+            data: imageObj.base64
+          }
+        });
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: parts }],
+          generationConfig: { temperature: 0.3 }
+        })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error('AIからの応答が空でした。');
+      return text;
+    }
+
+    function cleanAndParseJson(raw) {
+      let cleaned = raw.trim();
+      cleaned = cleaned.replace(/^```json\s*/i, '');
+      cleaned = cleaned.replace(/^```\s*/, '');
+      cleaned = cleaned.replace(/\s*```$/, '');
+      return JSON.parse(cleaned.trim());
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+
+</body>
+</html>
+
